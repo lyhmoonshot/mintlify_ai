@@ -1,0 +1,71 @@
+import { Tabs } from 'nextra/components'
+
+# Quickstart with the Kimi API
+
+The Kimi API allows you to interact with the Kimi large language model. Here is a simple example code:
+
+<Tabs items={['python', 'node.js']} >
+  <Tabs.Tab>
+```python showLineNumbers
+from openai import OpenAI
+ 
+client = OpenAI(
+    api_key="MOONSHOT_API_KEY", # Replace MOONSHOT_API_KEY with the API Key you obtained from the Kimi Open Platform
+    base_url="https://api.moonshot.ai/v1",
+)
+ 
+completion = client.chat.completions.create(
+    model = "kimi-k2.5",
+    messages = [
+        {"role": "system", "content": "You are Kimi, an AI assistant provided by Moonshot AI. You are proficient in Chinese and English conversations. You provide users with safe, helpful, and accurate answers. You will reject any requests involving terrorism, racism, or explicit content. Moonshot AI is a proper noun and should not be translated."},
+        {"role": "user", "content": "Hello, my name is Li Lei. What is 1+1?"}
+    ]
+)
+
+# We receive a response from the Kimi large language model via the API (role=assistant)
+print(completion.choices[0].message.content)
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```js showLineNumbers
+const OpenAI = require("openai")
+ 
+client = new OpenAI({
+    apiKey: "MOONSHOT_API_KEY", // Replace MOONSHOT_API_KEY with the API Key you obtained from the Kimi Open Platform
+    baseURL: "https://api.moonshot.ai/v1",
+})
+
+async function main(){
+    completion = await client.chat.completions.create({
+        model: "kimi-k2.5",
+        messages: [
+            {"role": "system", "content": "You are Kimi, an AI assistant provided by Moonshot AI. You are proficient in Chinese and English conversations. You provide users with safe, helpful, and accurate answers. You will reject any requests involving terrorism, racism, or explicit content. Moonshot AI is a proper noun and should not be translated."},
+            {"role": "user", "content": "Hello, my name is Li Lei. What is 1+1?"}
+        ]
+    })
+     
+    // We receive a response from the Kimi large language model via the API (role=assistant)
+    console.log(completion.choices[0].message.content)
+}
+
+main()
+```
+  </Tabs.Tab>
+</Tabs>
+To successfully run the above code, you may need to prepare the following:
+
+1. A Python environment or a Node.js environment. We recommend using a Python interpreter version 3.8 or higher;
+2. The OpenAI SDK. Our API is fully compatible with the OpenAI API format, so you can directly use the Python or Node.js OpenAI SDK for calls. You can install the OpenAI SDK as follows:
+	```
+	pip install --upgrade 'openai>=1.0' #Python
+    npm install openai@latest #Node.js
+	```
+3. An API Key. You need to [create an API Key](/console/api-keys) from the Kimi Open Platform and pass it to the `OpenAi Client` so that we can correctly identify your identity;
+
+If you successfully run the above code without any errors, you will see output similar to the following:
+
+```
+Hello, Li Lei! 1+1 equals 2. This is a basic math addition problem. If you have any other questions or need help, feel free to let me know.
+```
+
+*Note: Due to the uncertainty of the Kimi large language model, the actual response may not be exactly the same as the above content.*

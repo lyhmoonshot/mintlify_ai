@@ -1,0 +1,69 @@
+# Setting Up and Verifying Your Organization
+
+When you register and log in to the Open Platform account, you can find your organization ID on the **Organization Management** - **Organization Verification** page. The organization ID is the unique identifier for your organization.
+
+# Organization Balance Alert
+
+To prevent service interruptions due to insufficient account balance, we recommend configuring balance alerts in the [Organization Management Settings](https://platform.moonshot.ai/console/account).
+
+* The platform provides customizable balance alert thresholds, with a default setting of $5
+* When your account balance drops below the configured threshold, the system will automatically send notification emails to the organization's registered email address
+
+    ![settings](/docs/guide/org_settings_alert.png)
+
+# Managing Projects and Usage Limits
+
+To meet the needs of multiple business product lines under a single organization, or to distinguish between production and testing environments, you can create multiple projects under your organization. Within each project, you can create an API Key. The calls made using the project's API Key will be recorded under the project's consumption, allowing you to independently manage the usage of different projects.
+
+## Project Balance and Rate Limiting
+
+- All projects under an organization share the organization's rate limits.
+- All projects under an organization share the organization's account balance.
+
+## Project Consumption Management
+
+* The platform now supports setting monthly and daily consumption budgets on a per-project basis. You can set the monthly or daily consumption limits for each project on the **Project Management** - **Project Settings** - **Project Budget/Rate Limiting Settings** page. Once the API Key consumption within a project reaches the set budget, any subsequent API requests for that project will be denied, effectively helping you manage your business budget. Due to billing cycle issues, the actual enforcement of these limits may have a delay of about 10 minutes.
+
+
+![settings](/docs/guide/project_settings_en.png)
+
+* If you wish to limit the maximum TPM (Transactions Per Minute) for a single project, you can configure the project's TPM rate limit independently. If the project's API Key requests reach this TPM, the requests will be denied. (The project's TPM must not exceed the organization's TPM. If you set a value higher than the organization's TPM, the organization's TPM will be used for rate limiting.)
+
+* The platform also provides an overview page for both the organization and individual projects, offering consumption analysis at both levels to help you get a clear understanding of your organization's spending.
+
+
+## Project Quantity Limitations
+
+The number of projects your organization can create depends on the type of organization verification. The upper limits for different verification types are as follows:
+
+| Organization Type  | Project Limit | API Key Limit | 
+| ------------------ | ------------ | ------------- | 
+| Default            | 20           | 50            | 
+| Enterprise Verified| 50           | 100           | 
+
+If you have additional requirements, please fill out the [Contact Sales](https://platform.moonshot.ai/console/contact-sales) form for consultation.
+
+# Member Management
+
+## Organization Member Management
+
+To help you manage your organization, you can invite new members on the **Organization Management** - **Member Management** page. The platform generates a dedicated invitation link for each new member. The invitee can use this link to register and log in to the Open Platform and join your organization.  
+**Note:** Please visit the [Set Organization Information](/console/general) page to maintain your organization's info and complete your enterprise verification as a prerequisite.
+
+![invite](/docs/guide/invite_members.png)
+
+![invite1](/docs/guide/invite_url.png)
+
+* **Organization Administrator**: The organization creator is the default administrator. Administrators can create projects, invite and manage members, and issue invoices.
+* **General Member**: General members can only view projects. They must be invited to join a project to gain access to project resources.
+
+## Project Member Management
+
+Organization administrators can create projects and invite organization members to join and help manage projects. Project members can create their own API Keys within the project to utilize project resources.
+
+* **Project Administrator**: Can manage project budget/rate limits/consumption notifications, invite members, and create API Keys.
+* **General Project Member**: Can only view projects / create API Keys.
+
+## Project API Key Management
+
+It is recommended that each project member creates their own API Key within a project rather than sharing keys. When a member is removed from a project, all API Keys created by that member will also be invalidated, helping your organization effectively manage project resources.

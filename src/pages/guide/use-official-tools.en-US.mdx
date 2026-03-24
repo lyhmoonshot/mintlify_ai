@@ -1,0 +1,409 @@
+import { Tabs } from 'nextra/components'
+
+# How to Use Official Tools in Kimi API
+
+Kimi Open Platform has specially launched official tools, you can **freely** integrate these official tools into your own applications to create your intelligent business products! (Currently, Kimi open platform official tools are temporarily free to use. When the tool load reaches capacity limits, temporary rate limiting measures may be applied)
+
+This section will guide you through how to easily call and execute these official tools in your applications.
+
+## Official Tools List
+
+| Tool Name                      | Tool Description                             |
+|-----------------------------|--------------------------------------|
+| `convert`   | Unit conversion tool, supporting length, mass, volume, temperature, area, time, energy, pressure, speed, and currency conversions              |
+| `web-search`       | Real-time information and internet search tool. Web search is currently charged, please see [Web Search Price](/docs/pricing/tools.mdx)            |
+| `rethink`          | Intelligent reasoning tool           |
+| `random-choice`    | Random selection tool         |
+| `mew`              | Random cat meowing and blessing tool        |
+| `memory`           | Memory storage and retrieval system tool, supporting persistent storage of conversation history and user preferences    |
+| `excel`            | Excel and CSV file analysis tool     |
+| `date`             | Date and time processing tool        |
+| `base64`           | Base64 encoding and decoding tool                |
+| `fetch`            | URL content extraction Markdown formatting tool           |
+| `quickjs`          | Quick JS engine security execution JavaScript code tool          |
+| `code_runner`      | Python code execution tool          |
+
+## An Example of Using Official Tools
+
+Here is a Python example, using the web_search official tool as an example, showing how to call official tools through Kimi API:
+
+You can also interactively experience the capabilities of Kimi models and tools through Kimi Development Workbench, [go to Development Workbench](/playground)
+
+Here are the Kimi official tools you can use, you can experience them by adding the formula URI to the demo example below:
+`moonshot/convert:latest`, `moonshot/web-search:latest`, `moonshot/rethink:latest`, `moonshot/random-choice:latest`, `moonshot/mew:latest`, `moonshot/memory:latest`, `moonshot/excel:latest`, `moonshot/date:latest`, `moonshot/base64:latest`, `moonshot/fetch:latest`, `moonshot/quickjs:latest`, `moonshot/code_runner:latest`
+
+```python
+# Formula Chat Client - OpenAI chat with official tools
+# Uses MOONSHOT_BASE_URL and MOONSHOT_API_KEY for OpenAI client
+
+import os
+import json
+import asyncio
+import argparse
+import httpx
+from openai import AsyncOpenAI
+
+
+class FormulaChatClient:
+    def __init__(self, moonshot_base_url: str, api_key: str):
+        self.openai = AsyncOpenAI(base_url=moonshot_base_url, api_key=api_key)
+        self.httpx = httpx.AsyncClient(
+            base_url=moonshot_base_url,
+            headers={"Authorization": f"Bearer {api_key}"},
+            timeout=30.0,
+        )
+        self.model = "kimi-k2.5"
+
+    async def get_tools(self, formula_uri: str):
+        response = await self.httpx.get(f"/formulas/{formula_uri}/tools")
+        return response.json().get("tools", [])
+
+    async def call_tool(self, formula_uri: str, function: str, args: dict):
+        response = await self.httpx.post(
+            f"/formulas/{formula_uri}/fibers",
+            json={"name": function, "arguments": json.dumps(args)},
+        )
+        fiber = response.json()
+
+        if fiber.get("status", "") == "succeeded":
+            return fiber["context"].get("output") or fiber["context"].get(
+                "encrypted_output"
+            )
+
+        if "error" in fiber:
+            return f"Error: {fiber['error']}"
+        if "error" in fiber.get("context", {}):
+            return f"Error: {fiber['context']['error']}"
+        if "output" in fiber.get("context", {}):
+            return f"Error: {fiber['context']['output']}"
+        return "Error: Unknown error"
+
+    async def handle_response(self, response, messages, all_tools, tool_to_uri):
+        message = response.choices[0].message
+        messages.append(message)
+        if not message.tool_calls:
+            print(f"\nAI Response: {message.content}")
+            return
+
+        print(f"\nAI decided to use {len(message.tool_calls)} tool(s):")
+
+        for call in message.tool_calls:
+            func_name = call.function.name
+            args = json.loads(call.function.arguments)
+
+            print(f"\nCalling tool: {func_name}")
+            print(f"Arguments: {json.dumps(args, ensure_ascii=False, indent=2)}")
+
+            uri = tool_to_uri.get(func_name)
+            if not uri:
+                raise ValueError(f"No URI found for tool {func_name}")
+
+            result = await self.call_tool(uri, func_name, args)
+            if len(result) > 100:
+                print(f"Tool result: {result[:100]}...")  # limit the output length
+            else:
+                print(f"Tool result: {result}")
+
+            messages.append(
+                {"role": "tool", "tool_call_id": call.id, "content": result}
+            )
+
+        next_response = await self.openai.chat.completions.create(
+            model=self.model, messages=messages, tools=all_tools
+        )
+        await self.handle_response(next_response, messages, all_tools, tool_to_uri)
+
+    async def chat(self, question, messages, all_tools, tool_to_uri):
+        messages.append({"role": "user", "content": question})
+        response = await self.openai.chat.completions.create(
+            model=self.model, messages=messages, tools=all_tools
+        )
+        await self.handle_response(response, messages, all_tools, tool_to_uri)
+
+    async def close(self):
+        await self.httpx.aclose()
+
+
+def normalize_formula_uri(uri: str) -> str:
+    """Normalize formula URI with default namespace and tag"""
+    if "/" not in uri:
+        uri = f"moonshot/{uri}"
+    if ":" not in uri:
+        uri = f"{uri}:latest"
+    return uri
+
+
+async def main():
+    parser = argparse.ArgumentParser(description="Chat with formula tools")
+    parser.add_argument(
+        "--formula",
+        action="append",
+        default=["moonshot/web-search:latest"],
+        help="Formula URIs",
+    )
+    parser.add_argument("--question", help="Question to ask")
+
+    args = parser.parse_args()
+
+    # Process and deduplicate formula URIs
+    raw_formulas = args.formula or ["moonshot/web-search:latest"]
+    normalized_formulas = [normalize_formula_uri(uri) for uri in raw_formulas]
+    unique_formulas = list(
+        dict.fromkeys(normalized_formulas)
+    )  # Preserve order while deduping
+
+    print(f"Initialized formulas: {unique_formulas}")
+
+    moonshot_base_url = os.getenv("MOONSHOT_BASE_URL", "https://api.moonshot.ai/v1")
+    api_key = os.getenv("MOONSHOT_API_KEY")
+
+
+    if not api_key:
+        print("MOONSHOT_API_KEY required")
+        return
+
+    client = FormulaChatClient(moonshot_base_url, api_key)
+
+    # Load and validate tools
+    print("\nLoading tools from all formulas...")
+    all_tools = []
+    function_names = set()
+    tool_to_uri = {}  # inverted index to the tool name
+
+    for uri in unique_formulas:
+        tools = await client.get_tools(uri)
+        print(f"\nTools from {uri}:")
+
+        for tool in tools:
+            func = tool.get("function", None)
+            if not func:
+                print(f"Skipping tool using type: {tool.get('type', 'unknown')}")
+                continue
+            func_name = func.get("name")
+            assert func_name, f"Tool missing name: {tool}"
+            assert (
+                func_name not in tool_to_uri
+            ), f"ERROR: Tool '{func_name}' conflicts between {tool_to_uri.get(func_name)} and {uri}"
+
+            if func_name in function_names:
+                print(
+                    f"ERROR: Duplicate function name '{func_name}' found across formulas"
+                )
+                print(f"Function {func_name} already exists in another formula")
+                await client.close()
+                return
+
+            function_names.add(func_name)
+            all_tools.append(tool)
+            tool_to_uri[func_name] = uri
+            print(f"  - {func_name}: {func.get('description', 'N/A')}")
+
+    print(f"\nTotal unique tools loaded: {len(all_tools)}")
+    if not all_tools:
+        print("Warning: No tools found in any formula")
+        return
+
+    try:
+        messages = [
+            {
+                "role": "system",
+                "content": "You are Kimi, an AI assistant provided by Moonshot AI. You are proficient in Chinese and English conversations. You provide users with safe, helpful, and accurate answers. You will reject any questions involving terrorism, racism, or explicit content. Moonshot AI is a proper noun and should not be translated.",
+            }
+        ]
+        if args.question:
+            print(f"\nUser: {args.question}")
+            await client.chat(args.question, messages, all_tools, tool_to_uri)
+        else:
+            print("Chat mode (type 'q' to quit)")
+            while True:
+                question = input("\nQ: ").strip()
+                if question.lower() == "q":
+                    break
+                if question:
+                    await client.chat(question, messages, all_tools, tool_to_uri)
+
+    finally:
+        await client.close()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+```
+
+## Official Tools Concept and Usage
+
+### Formula Concept
+
+Before understanding the official tools of Kimi, you need to learn a concept 'Formula'. Formula is a lightweight script engine collection. It can transform Python scripts into "instant computing power that can be triggered by AI with one click", allowing developers to focus only on code writing while the platform handles everything else like startup, scheduling, isolation, billing, recycling, etc.
+
+Formula is called through semantic URIs (like moonshot/web-search:latest). Each formula contains declarations (telling AI what it can do) and implementations (Python code). The platform automatically handles all underlying details (startup, isolation, recycling, etc.), making tools easy to share and reuse in the community. You can experience and debug these tools in Kimi Playground, or call them through API in applications.
+
+### How to Call Official Tools
+
+For formula URIs, they generally consist of 3 parts, for example `moonshot/web-search:latest`. The web-search part is its `name`, currently we only support `moonshot` for namespace, and `latest` will be the default tag.
+
+A typical usage is if we need to call web search, we can send an HTTP request like this:
+
+```bash
+export FORMULA_URI="moonshot/web-search:latest"
+export MOONSHOT_BASE_URL="https://api.moonshot.ai/v1"
+
+curl -X POST ${MOONSHOT_BASE_URL}/formulas/${FORMULA_URI}/fibers \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer $MOONSHOT_API_KEY" \
+-d '{
+  "name": "web_search",
+  "arguments": "{\"query\": \"Please look up the latest news about Moonshot AI.\"}"
+}'
+```
+
+For web-search, since it was set as protected when created, its result will appear in the `context.encrypted_output` field. The format is similar to `----MOONSHOT ENCRYPTED BEGIN----... ----MOONSHOT ENCRYPTED END----`, which can be directly used in the tool.
+
+#### Interaction with Chat Completions
+
+As shown in [Is 3214567 a prime number? An example of Tool Calls](/docs/api/tool-use.mdx), there are several key points we need to align between the Formula API and the model.
+
+##### How to set the `tools` field?
+
+Now given a formula uri like `moonshot/web-search:latest`, we can directly append it to the url
+
+```bash
+curl ${MOONSHOT_BASE_URL}/formulas/${FORMULA_URI}/tools \
+    -H "Authorization: Bearer $MOONSHOT_API_KEY"
+```
+
+Here is a sample output:
+
+```json
+{
+  "object": "list",
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "web_search",
+        "description": "Search the web for information",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "What to search for",
+              "type": "string"
+            }
+          },
+          "required": [ "query" ]
+        }
+      }
+    }
+  ]
+}
+```
+
+We can simply take the `tools` field (always an array of dicts) and append it to your request's `tools` list. We always ensure this list is API-compatible.
+
+However, you may need to note that if `type=function`, you need to ensure that `function.name` is unique within an API request, otherwise the chat completion request will be considered invalid and immediately returned with a 401 error.
+
+Additionally, if you are using multiple formulas, you need to maintain a mapping of `function.name` -> `formula_uri` for future reference.
+
+##### Handling Model Request Return
+
+If the chat completion's `finish_reason=tool_calls`, it means the model has triggered a tool call. The content might look like this:
+
+```json
+{
+  "id": "chatcmpl-1234567890",
+  "object": "chat.completion",
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "web_search:0",
+            "type": "function",
+            "function": {
+              "name": "web_search",
+              "arguments": "{\"query\": \"What is the RGB value of sky blue?\" }"
+            }
+          }
+        ]
+      },
+      "finish_reason": "tool_calls"
+    }
+  ]
+}
+```
+
+We can see that we need to call `web_search` by checking `choices[0].message.tool_calls[0].function.name`, and then find that the `formula_uri` corresponding to `web_search` is `moonshot/web-search:latest`.
+
+We can copy the `choices[0].message.tool_calls[0].function` as the body and send a request to `${MOONSHOT_BASE_URL}/formulas/${FORMULA_URI}/fibers`. Specifically, because the `function.arguments` output by the model is a valid JSON, but in format it is still an encoded string. You don't need to escape it, just use it as the body of the call.
+
+##### Handling Fiber Request Return
+
+A Fiber is a "process snapshot" that contains logs, Tracing, and resource usage, making it convenient for debugging and auditing.
+
+The result of POST is usually `status`, which may be `succeeded` or various types of errors. When `succeeded`, the result may look like this:
+
+```json
+{
+  "id": "fiber-f43p7sby7ny111houyq1",
+  "object": "fiber",
+  "created_at": 1753440997,
+  "lambda_id": "lambda-f3w8y6qcoqgi11h8q7ui",
+  "status": "succeeded",
+  "context": {
+    "input": "{\"name\":\"web_search\",\"arguments\":\"{\\\"query\\\": \\\"What is the RGB value of sky blue?\\\" }\"}",
+    "encrypted_output": "----MOONSHOT ENCRYPTED BEGIN----+nf6...DSM=----MOONSHOT ENCRYPTED END----"
+  },
+  "formula": "moonshot/web-search:latest",
+  "organization_id": "staff",
+  "project_id": "proj-88a5894a985646b5902b70909748ba16"
+}
+```
+
+Specifically, if it is a search, it may return `encrypted_output`, and in most cases we may return `output`. This `output` is your next round of input.
+
+Generally, when continuing the request, the messages are arranged as follows:
+
+```json
+messages = [
+{ 
+  /* other messages */
+  { /* the return content of the previous round of the model */
+    "role": "assistant",
+    tool_calls": [
+      {
+        "id": "web_search:0",
+        "type": "function",
+        "function": {
+          "name": "web_search",
+          "arguments": "{\"query\": \"What is the RGB value of sky blue?\" }"
+        }
+      }
+    ]
+  },
+  { /* the information you need to supplement */
+    "role": "tool",
+    "tool_call_id": "web_search:0",  /* note that the id here needs to be aligned with the id in the previous tool_calls[] */
+    "content": "----MOONSHOT ENCRYPTED BEGIN----+nf6...DSM=----MOONSHOT ENCRYPTED END----"
+  }
+]
+```
+
+Then the model can continue to do further reasoning.
+
+Key Points:
+
+* The model may return more than one tool\_calls, so you must return all tool\_calls for the model to continue, otherwise the request will be considered invalid and rejected.
+
+* If the assistant has tool\_calls, the next messages must be exactly the same role=tool messages as the tool\_calls, and the tool\_call\_id must be aligned with the previous tool\_calls.id.
+
+  * If there are multiple tool\_calls, the order is not sensitive
+
+  * The ids of the tool\_calls output by our model must be unique, and the ids in the role=tool messages must also be aligned.
+
+  * The uniqueness requirement is only local to the tool\_calls - response in this round, not for the entire conversation or globally.
+
+
+

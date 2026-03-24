@@ -1,0 +1,250 @@
+# Use the Kimi Vision Model
+
+The Kimi Vision Model (including `moonshot-v1-8k-vision-preview` / `moonshot-v1-32k-vision-preview` / `moonshot-v1-128k-vision-preview` / `kimi-k2.5` and so on) can understand visual content, including text in the image, colors, and the shapes of objects. The latest kimi-k2.5 model can also understand video content.
+
+## Using base64 to Upload Images Directly
+
+Here is how you can ask Kimi questions about an image using the following code:
+
+```python
+import os
+import base64
+
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ.get("MOONSHOT_API_KEY"),
+    base_url="https://api.moonshot.ai/v1",
+)
+
+# Replace kimi.png with the path to the image you want Kimi to recognize
+image_path = "kimi.png"
+
+with open(image_path, "rb") as f:
+    image_data = f.read()
+
+# We use the built-in base64.b64encode function to encode the image into a base64 formatted image_url
+image_url = f"data:image/{os.path.splitext(image_path)[1]};base64,{base64.b64encode(image_data).decode('utf-8')}"
+
+
+completion = client.chat.completions.create(
+    model="kimi-k2.5",
+    messages=[
+        {"role": "system", "content": "You are Kimi."},
+        {
+            "role": "user",
+            # Note here, the content has changed from the original str type to a list. This list contains multiple parts, with the image (image_url) being one part and the text (text) being another part.
+            "content": [
+                {
+                    "type": "image_url", # <-- Use the image_url type to upload the image, the content is the base64 encoded image
+                    "image_url": {
+                        "url": image_url,
+                    },
+                },
+                {
+                    "type": "text",
+                    "text": "Describe the content of the image.", # <-- Use the text type to provide text instructions, such as "Describe the content of the image"
+                },
+            ],
+        },
+    ],
+)
+
+print(completion.choices[0].message.content)
+```
+
+Note that when using the Vision model, the type of the `message.content` field has changed from `str` to `List[Dict]` (i.e., a JSON array). Additionally, do not serialize the JSON array and put it into `message.content` as a `str`. This will cause Kimi to fail to correctly identify the image type and may trigger the `Your request exceeded model token limit` error.
+
+✅ Correct Format:
+
+```json
+{
+    "model": "kimi-k2.5",
+    "messages":
+    [
+        {
+            "role": "system",
+            "content": "You are Kimi, an AI assistant provided by Moonshot AI, who excels in Chinese and English conversations. You provide users with safe, helpful, and accurate answers. You will reject any questions related to terrorism, racism, or explicit content. Moonshot AI is a proper noun and should not be translated into other languages."
+        },
+        {
+            "role": "user",
+            "content":
+            [
+                {
+                    "type": "image_url",
+                    "image_url":
+                    {
+                        "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABhCAYAAAApxKSdAAAACXBIWXMAACE4AAAhOAFFljFgAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAUUSURBVHgB7Z29bhtHFIWPHQN2J7lKqnhYpYvpIukCbJEAKQJEegLReYFIT0DrCSI9QEDqCSIDaQIEIOukiJwyza5SJWlId3FFz+HuGmuSSw6p+dlZ3g84luhdUeI9M3fmziyXgBCUe/DHYY0Wj/tgWmjV42zFcWe4MIBBPNJ6qqW0uvAbXFvQgKzQK62bQhkaCIPc10q1Zi3XH1o/IG9cwUm0RogrgDY1KmLgHYX9DvyiBvDYI77XmiD+oLlQHw7hIDoCMBOt1U9w0BsU9mOAtaUUFk3oQoIfzAQFCf5dNMEdTFCQ4NtQih1NSIGgf3ibxOJt5UrAB1gNK72vIdjiI61HWr+YnNxDXK0rJiULsV65GJeiIescLSTTeobKSutiCuojX8kU3MBx4I3WeNVBBRl4fWiCyoB8v2JAAkk9PmDwT8sH1TEghRjgC27scCx41wO43KAg+ILxTvhNaUACwTc04Z0B30LwzTzm5Rjw3sgseIG1wGMawMBPIOQcqvzrNIMHOg9Q5KK953O90/rFC+BhJRH8PQZ+fu7SjC7HAIV95yu99vjlxfvBJx8nwHd6IfNJAkccOjHg6OgIs9lsra6vr2GTNE03/k7q8HAhyJ/2gM9O65/4kT7/mwEcoZwYsPQiV3BwcABb9Ho9KKU2njccDjGdLlxx+InBBPBAAR86ydRPaIC9SASi3+8bnXd+fr78nw8NJ39uDJjXAVFPP7dp/VmWLR9g6w6Huo/IOTk5MTpvZesn/93AiP/dXCwd9SyILT9Jko3n1bZ+8s8rGPGvoVHbEXcPMM39V1dX9Qd/19PPNxta959D4HUGF0RrAFs/8/8mxuPxXLUwtfx2WX+cxdivZ3DFA0SKldZPuPTAKrikbOlMOX+9zFu/Q2iAQoSY5H7mfeb/tXCT8MdneU9wNNCuQUXZA0ynnrUznyqOcrspUY4BJunHqPU3gOgMsNr6G0B0BpgUXrG0fhKVAaaF1/HxMWIhKgNMcj9Tz82Nk6rVGdav/tJ5eraJ0Wi01XPq1r/xOS8uLkJc6XYnRTMNXdf62eIvLy+jyftVghnQ7Xahe8FW59fBTRYOzosDNI1hJdz0lBQkBflkMBjMU5iL13pXRb8fYAJrB/a2db0oFHthAOEUliaYFHE+aaUBdZsvvFhApyM0idYZwOCvW4JmIWdSzPmidQaYrAGZ7iX4oFUGnJ2dGdUCTRqMozeANQCLsE6nA10JG/0Mx4KmDMbBCjEWR2yxu8LAM98vXelmCA2ovVLCI8EMYODWbpbvCXtTBzQVMSAwYkBgxIDAtNKAXWdGIRADAiMpKDA0IIMQikx6QGDEgMCIAYGRMSAsMgaEhgbcQgjFa+kBYZnIGBCWWzEgLPNBOJ6Fk/aR8Y5ZCvktKwX/PJZ7xoVjfs+4chYU11tK2sE85qUBLyH4Zh5z6QHhGPOf6r2j+TEbcgdFP2RaHX5TrYQlDflj5RXE5Q1cG/lWnhYpReUGKdUewGnRmhvnCJbgmxey8sHiZ8iwF3AsUBBckKHI/SWLq6HsBc8huML4DiK80D6WnBqLzN68UFCmopheYJOVYgcU5FOVbAVfYUcUZGoaLPglCtITdg2+tZUFBTFh2+ArWEYh/7z0WIIQSiM43lt5AWAmWhLHylN4QmkNEXfAbGqEQKsHSfHLYwiSq8AnaAAKeaW3D8VbijwNW5nh3IN9FPI/jnpaPKZi2/SfFuJu4W3x9RqWL+N5C+7ruKpBAgLkAAAAAElFTkSuQmCC"
+                    }
+                },
+                {
+                    "type": "text",
+                    "text": "Please describe this image."
+                }
+            ]
+        }
+    ],
+    "temperature": 0.3
+}
+```
+
+❌ Invalid Format：
+
+
+```json
+{
+    "model": "kimi-k2.5",
+    "messages":
+    [
+        {
+            "role": "system",
+            "content": "You are Kimi, an AI assistant provided by Moonshot AI. You are proficient in Chinese and English conversations. You provide users with safe, helpful, and accurate responses. You will refuse to answer any questions involving terrorism, racism, or explicit content. Moonshot AI is a proper noun and should not be translated into other languages."
+        },
+        {
+            "role": "user",
+            "content": "[{\"type\": \"image_url\", \"image_url\": {\"url\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABhCAYAAAApxKSdAAAACXBIWXMAACE4AAAhOAFFljFgAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAUUSURBVHgB7Z29bhtHFIWPHQN2J7lKqnhYpYvpIukCbJEAKQJEegLReYFIT0DrCSI9QEDqCSIDaQIEIOukiJwyza5SJWlId3FFz+HuGmuSSw6p+dlZ3g84luhdUeI9M3fmziyXgBCUe/DHYY0Wj/tgWmjV42zFcWe4MIBBPNJ6qqW0uvAbXFvQgKzQK62bQhkaCIPc10q1Zi3XH1o/IG9cwUm0RogrgDY1KmLgHYX9DvyiBvDYI77XmiD+oLlQHw7hIDoCMBOt1U9w0BsU9mOAtaUUFk3oQoIfzAQFCf5dNMEdTFCQ4NtQih1NSIGgf3ibxOJt5UrAB1gNK72vIdjiI61HWr+YnNxDXK0rJiULsV65GJeiIescLSTTeobKSutiCuojX8kU3MBx4I3WeNVBBRl4fWiCyoB8v2JAAkk9PmDwT8sH1TEghRjgC27scCx41wO43KAg+ILxTvhNaUACwTc04Z0B30LwzTzm5Rjw3sgseIG1wGMawMBPIOQcqvzrNIMHOg9Q5KK953O90/rFC+BhJRH8PQZ+fu7SjC7HAIV95yu99vjlxfvBJx8nwHd6IfNJAkccOjHg6OgIs9lsra6vr2GTNE03/k7q8HAhyJ/2gM9O65/4kT7/mwEcoZwYsPQiV3BwcABb9Ho9KKU2njccDjGdLlxx+InBBPBAAR86ydRPaIC9SASi3+8bnXd+fr78nw8NJ39uDJjXAVFPP7dp/VmWLR9g6w6Huo/IOTk5MTpvZesn/93AiP/dXCwd9SyILT9Jko3n1bZ+8s8rGPGvoVHbEXcPMM39V1dX9Qd/19PPNxta959D4HUGF0RrAFs/8/8mxuPxXLUwtfx2WX+cxdivZ3DFA0SKldZPuPTAKrikbOlMOX+9zFu/Q2iAQoSY5H7mfeb/tXCT8MdneU9wNNCuQUXZA0ynnrUznyqOcrspUY4BJunHqPU3gOgMsNr6G0B0BpgUXrG0fhKVAaaF1/HxMWIhKgNMcj9Tz82Nk6rVGdav/tJ5eraJ0Wi01XPq1r/xOS8uLkJc6XYnRTMNXdf62eIvLy+jyftVghnQ7Xahe8FW59fBTRYOzosDNI1hJdz0lBQkBflkMBjMU5iL13pXRb8fYAJrB/a2db0oFHthAOEUliaYFHE+aaUBdZsvvFhApyM0idYZwOCvW4JmIWdSzPmidQaYrAGZ7iX4oFUGnJ2dGdUCTRqMozeANQCLsE6nA10JG/0Mx4KmDMbBCjEWR2yxu8LAM98vXelmCA2ovVLCI8EMYODWbpbvCXtTBzQVMSAwYkBgxIDAtNKAXWdGIRADAiMpKDA0IIMQikx6QGDEgMCIAYGRMSAsMgaEhgbcQgjFa+kBYZnIGBCWWzEgLPNBOJ6Fk/aR8Y5ZCvktKwX/PJZ7xoVjfs+4chYU11tK2sE85qUBLyH4Zh5z6QHhGPOf6r2j+TEbcgdFP2RaHX5TrYQlDflj5RXE5Q1cG/lWnhYpReUGKdUewGnRmhvnCJbgmxey8sHiZ8iwF3AsUBBckKHI/SWLq6HsBc8huML4DiK80D6WnBqLzN68UFCmopheYJOVYgcU5FOVbAVfYUcUZGoaLPglCtITdg2+tZUFBTFh2+ArWEYh/7z0WIIQSiM43lt5AWAmWhLHylN4QmkNEXfAbGqEQKsHSfHLYwiSq8AnaAAKeaW3D8VbijwNW5nh3IN9FPI/jnpaPKZi2/SfFuJu4W3x9RqWL+N5C+7ruKpBAgLkAAAAAElFTkSuQmCC\"}}, {\"type\": \"text\", \"text\": \"Please describe this image\"}]"
+        }
+    ],
+    "temperature": 0.3
+}
+```
+
+## Using Uploaded Images or Videos
+
+In the previous example, our `image_url` was a base64-encoded image. Since video files are often larger, we provide an additional method where you can first upload images or videos to Moonshot, then reference them via file ID. For information on uploading images or videos, please refer to [Image Understanding Upload](../api/files.en-US.mdx)
+
+```python
+import os
+from pathlib import Path
+
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ.get("MOONSHOT_API_KEY"),
+    base_url="https://api.moonshot.cn/v1",
+)
+
+# Here, you need to replace video.mp4 with the path to the image or video you want Kimi to recognize
+video_path = "video.mp4"
+
+file_object = client.files.create(file=Path(video_path), purpose="video")  # Upload video to Moonshot
+
+completion = client.chat.completions.create(
+    model="kimi-k2.5",
+    messages=[
+        {
+            "role": "system",
+            "content": "You are Kimi, an AI assistant provided by Moonshot AI, who excels in Chinese and English conversations. You provide users with safe, helpful, and accurate answers. You will refuse to answer any questions involving terrorism, racism, or explicit content. Moonshot AI is a proper noun and should not be translated into other languages."
+        },
+        {
+            "role": "user",
+            "content":
+            [
+                {
+                    "type": "video_url",
+                    "video_url":
+                    {
+                        "url": f"ms://{file_object.id}"  # Note this is ms:// instead of base64-encoded image
+                    }
+                },
+                {
+                    "type": "text",
+                    "text": "Please describe this video"
+                }
+            ]
+        }
+    ]
+)
+
+print(completion.choices[0].message.content)
+```
+
+Note that in the above example, the format of `video_url.url` is `ms://<file-id>`, where ms is short for moonshot storage, which is Moonshot's internal protocol for referencing files.
+
+## Supported Formats
+
+Images support the following formats:
+- png
+- jpeg
+- webp
+- gif
+
+Videos support the following formats:
+
+- mp4
+- mpeg
+- mov
+- avi
+- x-flv
+- mpg
+- webm
+- wmv
+- 3gpp
+
+## Token Calculation and Costs
+
+Images and videos use dynamic token calculation. You can obtain the token consumption of a request containing images or videos through the [estimate tokens API](../api/estimate.en-US.mdx) before starting the understanding process.
+
+Generally speaking, the higher the image resolution, the more tokens it consumes. Videos are composed of several key frames. The more key frames and the higher the resolution, the more tokens are consumed.
+
+The Vision model follows the same pricing model as the `moonshot-v1` series, with costs based on the total tokens used for model inference. For more details on token pricing, please refer to:
+
+[Model Inference Pricing](../pricing/chat.en-US.mdx)
+
+## Best Practices
+### Resolution
+We recommend that image resolution does not exceed 4k (4096×2160), and video resolution does not exceed 2k (2048×1080). Resolutions higher than recommended will only cost more time processing the input without improving model understanding performance.
+
+### File Upload vs base64
+Due to our overall request body size limitations, very large videos should be processed using the file upload method for visual understanding.
+
+For images or videos that need to be referenced multiple times, we recommend using the file upload method for visual understanding.
+
+Regarding file upload limitations, please refer to the [File Upload](../api/files.en-US.mdx) documentation.
+
+
+## Features and Limitations
+
+The Vision model supports the following features:
+
+- [x] Multi-turn conversations
+- [x] Streaming output
+- [x] Tool invocation
+- [x] JSON Mode
+- [x] Partial Mode
+
+The following features are not supported or only partially supported:
+
+
+- URL-formatted images: Not supported, currently only supports base64-encoded image content and images/videos uploaded via file ID
+
+Other limitations:
+
+- Image quantity: The Vision model has no limit on the number of images, but ensure that the request body size does not exceed 100M.
+
+## Parameters Differences in Request Body
+Parameters are listed in [chat](../api/chat.en-US.mdx#request-body). However, behaviour of some parameters may be different in k2.5 models.
+
+**We recommend using the default values instead of manually configuring these parameters.**
+
+Differences are listed below.
+
+| Field        | Required | Description                                                                                           | Type       | Values      |
+| ----------- | ---- | ------------------------------------------------------------------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------- |
+| max_tokens  | optional | The maximum number of tokens to generate for the chat completion. | int        | Default to be 32k aka 32768 |
+| thinking | optional | **New!** This parameter controls if the thinking is enabled for this request | object | Default to be `{"type": "enabled"}`. Value can only be one of `{"type": "enabled"}` or `{"type": "disabled"}` |
+| temperature | optional | The sampling temperature to use   | float      | k2.5 model will use a fixed value 1.0, non-thinking mode will use a fixed value 0.6. Any other value will result in an error  |
+| top_p       | optional | A sampling method | float      | k2.5 model will use a fixed value 0.95. Any other value will result in an error  |
+| n           | optional | The number of results to generate for each input message | int        | k2.5 model will use a fixed value 1. Any other value will result in an error  |
+| presence_penalty | optional | Penalizing new tokens based on whether they appear in the text | float        | k2.5 model will use a fixed value 0.0. Any other value will result in an error  |
+| frequency_penalty  | optional | Penalizing new tokens based on their existing frequency in the text | float        | k2.5 model will use a fixed value 0.0. Any other value will result in an error  |
+
+
+## Advanced Usages
+### Using vision models in Kimi Cli
+[Kimi Cli](https://github.com/MoonshotAI/kimi-cli/) is an open source AI Agent by Moonshot.
+Kimi Cli has become more powerful with the release of K2.5 model.
+[Kimi Agent SDK](https://github.com/MoonshotAI/kimi-agent-sdk/) can be used in your own code, using Kimi Cli more conveniently.
+
+A tool, that can find the source of anime from a screenshot using Kimi Agent SDK is shown as below.
+[anime-recognizer](https://github.com/MoonshotAI/kimi-agent-sdk/tree/main/examples/go/anime-recognizer)

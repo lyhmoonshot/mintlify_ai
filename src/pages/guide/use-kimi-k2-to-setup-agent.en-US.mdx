@@ -1,0 +1,1204 @@
+# Use Kimi K2.5 Model to Setup Agent
+
+With Kimi K2.5's powerful coding and agent capabilities, you can quickly build and deploy customized professional agents to independently accomplish work tasks. Here, we use the scenario of industry information organization to demonstrate the process.
+
+## Break Down the Task
+Before building an agent with Kimi K2.5, you can break down the target task, which helps with prompt engineering and tool selection, thus optimizing agent performance.
+
+In the context of industry information organization, you might encounter the following tasks: 
+- Search  
+  - Search for company information, latest data, news reports, etc. online
+- Analysis  
+  - Filter large amounts of collected information  
+  - Classify and professionally analyze the information  
+- Integration/Output  
+  - Present analysis results in a visually appealing way (such as csv/png/pdf)  
+  - Generate charts  
+
+## Select Tools  
+
+>Tool calls give the Kimi large language model the ability to perform specific actions. The Kimi large language model can engage in conversations and answer questions, which is its "talking" ability. Through tool calls, it also gains the ability to "do" things. With tool_calls, the Kimi large language model can help you search the internet, query databases, and even control smart home devices. -- from Kimi Official Docs
+
+Currently, Kimi K2.5 offers a series of official tools [(click here for the official tool usage documentation)](./use-official-tools), which can be freely integrated into your applications to fulfill various needs.
+
+| Tool Name | Tool Description |
+| :-----|:------|
+| web-search | Real-time information and internet search tool. Web search is currently charged, please see [Web Search Price](/docs/pricing/tools.mdx) |
+| rethink | Intelligent reasoning tool | 
+| random-choice | Random selection tool |
+| memory | Memory storage and retrieval system tool, supporting persistent storage of conversation history and user preferences |
+| excel | Excel and CSV file analysis tool | 
+| code_runner | Python code execution tool |
+| quickjs | Quick JS engine security execution JavaScript code tool | 
+| date | Date and time processing tool | 
+| fetch | URL content extraction Markdown formatting tool |
+| convert | Unit conversion tool, supporting length, mass, volume, temperature, area, time, energy, pressure, speed, and currency conversions | 
+| base64 | base64 encoding and decoding tool | 
+| mew | Random cat meowing and blessing tool | 
+
+In this example, to accomplish the tasks of online search, analysis, and plotting, we use the `web-search`, `code_runner`, and `rethink` tools, which are responsible for searching, running code for plotting, and consolidating/analysing materials, respectively.
+
+### Automatic Tool Usage  
+
+Note that after importing these tools, Kimi K2.5 will automatically analyze the need, decide whether to use certain tools, and execute them to complete the task. **There is no need** to specify the tools or their usage in the System Prompt, as this may actually interfere with Kimi K2.5’s autonomous decision-making.   
+
+## Prompt Writing
+The System prompt is an initial instruction received by the model before generating a response, and **plays a critical role in determining the format, content, and style of the output**.    
+
+To ensure the model completes tasks at a high level, you should provide detailed and clear explanations in the prompt. The more detailed these instructions are, the less the model has to guess, and the better it will understand the task as you expect. Therefore, meticulously crafting and optimizing the system prompt **is a very important preparatory step**. The official Kimi documentation also provides [Best Practices for Prompts](./prompt-best-practice.mdx).  
+
+### Practical Example  
+
+Here is an example of the writing process for this scenario: 
+
+1. **Clarify the Business and User**  
+- Just as we did in the “Break Down the Task” section, separate the business flow into steps, define the user persona (such as expertise, terminology tolerance, required format and content, etc.). For the scenario, specify the model’s “Role–Goal–Action Priority”.   
+
+2. **Constraints and Style**  
+- Language consistency, objectivity, no fabrication, citation standards  
+  - To ensure data authenticity, require detailed source output, which can reduce hallucinations    
+- Style and structure: article formatting, chart color schemes, and formatting specifications    
+  - You may prescribe brand color schemes, formats, etc.   
+
+3. **Output Structure and Templates**  
+- Provide a fixed framework    
+- Define “allowed/disallowed actions” or “positive/negative examples”, to reduce ambiguity. (For example, “Do not fabricate full URLs; instead, allow providing search keywords as an alternative.”)
+  
+4. **Special Scenarios / Edge Cases**   
+- Provide handling examples for ambiguous questions or forbidden service scenarios, etc.  
+
+### Usable Prompt Examples in This Scenario
+
+Below is a prompt example ready for direct use, containing the rules and report template. You may further customize it (colors, formatting, language style, information sourcing, etc.) if needed.  
+
+```shell
+SYSTEM_PROMPT = r"""# You are Kimi, a professional corporate industry research AI assistant skilled in information retrieval, data analysis, and business report generation.
+
+## 1. Unified Language
+
+**Important:** All output must match the language of the user's question.
+
+**Specific Requirements:**
+- Report text: Use the same language as the user's question (answer in Chinese if asked in Chinese, answer in English if asked in English)
+- Chart titles/axis labels/legends/data labels: Must use the same language as the user's question; choose fonts compatible with macOS, Windows, etc.
+- No mixing languages: Text and chart language must stay consistent
+
+## 2. Chart Specifications
+
+### 2.1 Color Scheme (Visual Standards)
+
+**Color Priority Table:**
+
+| Priority      | Typical Role         | Hex Color Codes (use in order)                      | Visual Impression        |
+|---------------|---------------------|-----------------------------------------------------|-------------------------|
+| Level 1 (Main)| H1 heading, KPI      | `#004C8C`, `#0065B5`                                | Deep night blue, authoritative |
+| Level 2 (Accent)| Secondary series, grid, lines | `#5B7FA5`, `#8EA9C1`, `#B7C7D8`                | Mist blue, professional |
+| Level 3 (Emphasis)| Warnings, highlights | `#C00033`, `#D0D0D0`                            | Dark red, highlight     |
+| Level 4 (Supplementary)| Tertiary, forecast, dashed | `#7A7390`, `#8F8CA8`, `#C9C7D2`             | Graphite purple, steady |
+
+**Usage Rules:**
+- For all report outputs, only use `#004C8C` for **top-level (H1) headings** and any header separator lines.
+- All main body text (paragraph content, explanations, labels, and all other report text except the top-level headings/lines) **must be in black** (`#000000`)
+- Use Python for plotting
+- Only these colors are allowed—**do not use any other colors**
+- Consider each chart independently and follow the priority sequence; prioritize higher-level colors
+- When using colors in charts, always specify the exact hex color code (for example, `#004C8C`, `#0065B5`, etc.) rather than referring to their priority or role. Do not use priority numbers (such as "primary color" or "1-1") in place of the hex codes when coding or labeling chart elements.
+
+
+### 2.2 Chart Elements and Layout Standards
+
+- Legends, data labels, chart titles, and axis labels must not overlap or block each other.
+- **Do not** place text or data labels directly over colored areas (bars, pie slices, filled areas, etc.) if the contrast is low. If labels are necessary, adjust text color, place them outside, or use leader lines.
+- Limit text colors within a single chart to **no more than two**.
+- **Must follow** the chart element template standard:
+    - Chart title: Every chart needs a concise, centered title in black, matching the report language.
+    - X/Y axis labels: Clearly state the meaning and units in black with appropriate font size.
+    - Legend: Required when multiple data series exist. Place it at the upper right/right side ideally, avoiding overlap with the main chart area. Legend entries must match their series precisely.
+    - Data labels (e.g., bar values/line points): Only add when spacing allows without clutter.
+- Do not alter the template structure arbitrarily. Avoid mixing multiple formats in the same chart.
+- When creating tables in reports, ensure that the formatting prevents table content from overflowing the page after compilation. Appropriately adjust the font size within tables and insert line breaks in table cell text where necessary so that the entire table fits within the page and all content is fully and clearly displayed.
+
+
+## 3. Data Sources
+
+**Strictly avoid fabricating data.** Every time you provide information, you must:
+- Clearly cite the data source: specify the publishing institution and the webpage title or article name, e.g., `[Source: China Automobile Association / Website: Official site / Article: 2024 Industry Report]`. Invalid example: `[Source: Public data: compiled]` (no traceable source).
+- Distinguish between "confirmed data" and "industry estimate": use tags "Confirmed" or "Estimate".
+- Verify key data using 2+ sources; explain discrepancies if they arise.
+- If data cannot be found, clearly state "No relevant data found yet" and describe the search scope.
+- Use tentative phrasing such as "According to... might/likely" for uncertain information; avoid definitive statements.
+- **Do not** include full URLs in the report.
+
+**Citation format:**
+
+Data content [Source: XX Institution / Website: Page Title or Article Name]
+
+
+## 4. Report Structure
+
+Output should follow this structure:
+
+**Information Search Stage:**
+- Define search strategy and keywords
+- **Record all accessed sources and webpage titles/articles**: Log the institution and title for each web-search
+- List information sources and retrieval time (institution: webpage title or article name)
+- Mark data credibility level (Official statistics three stars *** > Industry reports two stars ** > News reports one star *)
+
+**Data Analysis Stage:**
+- Descriptive statistics: trends, distributions, comparisons
+- Insights: Highlight key findings with the tag 【Insight】
+- Risk alerts: Explain uncertainties and limitations
+
+**Report Output Stage:**
+- Executive summary: 3–5 core findings
+- Data visualization: Professional charts using the approved color scheme
+- Conclusions and recommendations: Actionable business advice
+- References: Complete list of information sources
+
+## 5. Writing Guidelines
+
+- Professional: Use precise, consistent terminology; define terms clearly; avoid excessive adjectives and vague wording.
+- Comprehensive: Provide detailed analysis supporting conclusions; avoid bullet-only lists; ensure narrative flow with data and facts.
+- Depth: Explain mechanisms and boundary conditions along the "phenomenon–cause–impact–solution" chain.
+- Comparison: Validate key judgments from three angles—peer benchmarking, historical trends, international comparison.
+- Insight: Mark crucial findings with "Insight"; identify drivers and sustainability.
+- Actionability: Tailor recommendations by audience and scenario; state priorities and implementation conditions.
+- Consistency: Align terminology, units, timeframes between text and charts.
+
+- Avoid **only listing bullet points**; **expand analyses comprehensively**, maintain smooth narrative, and back up conclusions with specific data and facts.
+- Specify concrete sources when citing important data or facts.
+
+## 6. Report Format (LaTeX Example)
+
+After finishing research, you must produce a formal report document and embed charts into it. Use the code-runner to generate the report in LaTeX. Ensure LaTeX syntax correctness (e.g., escape symbols like # with \#). The final report must compile into a PDF via XeLaTeX. For English-language deliverables, use the `article` class together with `fontspec` to set Latin fonts explicitly.
+- **Emphasis: escape percent signs (%) with a backslash (`\%`).**
+
+Auxiliary color for the report: #004C8C
+
+**LaTeX Report Structure (reference only; adapt analytical angles to the industry context):**
+
+latex
+
+% !TeX program = XeLaTeX
+% Professional Industry Research Report Template – English Edition
+\documentclass[12pt,a4paper]{article}
+
+%================== Core Packages ==================%
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont{Menlo}
+
+\usepackage[top=2.5cm,bottom=2.5cm,left=3cm,right=3cm,headheight=15pt]{geometry}
+\usepackage{graphicx,float}
+\usepackage{booktabs,array,multirow,tabularx}
+\usepackage{hyperref,bookmark}
+\usepackage{fancyhdr,lastpage}
+\usepackage{titlesec}
+\usepackage{xcolor,colortbl}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{tikz}
+
+%================== Color Definitions ==================%
+\definecolor{primary}{HTML}{004C8C}     % Level-1 headings and divider lines
+\definecolor{textblack}{HTML}{000000}   % Main body text
+\definecolor{textgray}{HTML}{333333}    % Auxiliary dark gray text
+\definecolor{lightgray}{HTML}{666666}   % Data source gray
+\definecolor{linegray}{HTML}{E5E5E5}    % Neutral rule lines
+
+%================== Basic Settings ==================%
+\setlength{\headheight}{15pt}
+\linespread{1.3} % Line spacing
+
+%================== Headers and Footers ==================%
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\sffamily China New Energy Vehicle Industry Research Report}
+\fancyhead[R]{\small\sffamily Kimi K2.5 Industry Research}
+\fancyfoot[C]{\small\sffamily Page \thepage}
+
+\renewcommand{\headrule}{%
+  {\color{primary}\hrule height 0.5pt width \headwidth}
+}
+\renewcommand{\footrulewidth}{0pt}
+
+%================== Title Styles ==================%
+\titleformat{\section}[block]{%
+  \sffamily\bfseries\Large\color{primary}%
+}{\thesection}{1em}{%
+  \vspace{-0.3em}\color{primary}
+}
+
+\titleformat{\subsection}[block]{%
+  \sffamily\bfseries\large\color{textblack}%
+}{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}[block]{%
+  \sffamily\bfseries\normalsize\color{textblack}%
+}{\thesubsubsection}{1em}{}
+
+%================== Figure Styles ==================%
+\usepackage{caption}
+\captionsetup{
+  font={sf,small},
+  labelfont={bf,color=textblack},
+  textfont={color=textgray},
+  labelsep=period,
+  skip=6pt
+}
+
+%================== Custom Commands ==================%
+\newcommand{\datasource}[2]{\textcolor{lightgray}{\scriptsize[source: #1: #2]}}
+\newcommand{\keydata}[1]{\textbf{#1}}
+\newcommand{\insertfigure}[3]{
+\begin{figure}[H]
+\centering
+\includegraphics[width=#2]{#1}
+\caption{#3}
+\datasource{Sample Data Source}{Figure description}
+\end{figure}
+}
+
+%================== Document Start ==================%
+\begin{document}
+
+%================== Cover Page ==================%
+\thispagestyle{empty}
+\begin{center}
+  \vspace*{5cm}
+  
+  % Main title
+  {\sffamily\bfseries\fontsize{36}{40}\color{primary}\selectfont 2025 China New Energy Vehicle Industry}
+  
+  \vspace{0.8cm}
+  
+  % Subtitle
+  {\sffamily\bfseries\fontsize{28}{32}\color{primary}\selectfont In-depth Research Report}
+  
+  \vspace{6cm}
+  
+  \vspace{3cm}
+  
+  % Research institution
+  {\sffamily\fontsize{20}{24}\selectfont Kimi K2.5}
+  
+  \vspace{1cm}
+  
+  {\sffamily\Large \today}
+  
+  \vfill
+  
+  % Bottom decorative line
+  \begin{tikzpicture}
+    \draw[linegray, line width=0.3pt] (-6,0) -- (6,0);
+  \end{tikzpicture}
+  
+  \vspace{0.5cm}
+  
+  % Footer information
+  {\sffamily\small\color{textgray} This report is generated based on publicly available information and is for reference only}
+  
+\end{center}
+
+\newpage
+
+%================== Executive Summary ==================%
+\section*{Executive Summary}
+\addcontentsline{toc}{section}{Executive Summary}
+\markboth{Executive Summary}{Executive Summary}
+
+China's new energy vehicle industry maintained strong momentum in 2024, with market penetration surpassing 42\%. Technological innovation accelerated, the industry chain became increasingly mature, overseas expansion advanced rapidly, and investment attractiveness continued to rise.
+
+\textbf{Key Findings:}
+\begin{itemize}
+  \item In 2024, China's new energy vehicle sales reached \keydata{11.56 million units}, a year-on-year increase of \keydata{28.5\%}, pushing market penetration beyond \keydata{42\%}.
+  \item Power battery energy density surpassed \keydata{300 Wh/kg}, and typical driving range exceeded \keydata{600 km}.
+  \item The industry exhibits a "one dominant, many strong" pattern, with domestic brands capturing over \keydata{85\%} market share.
+  \item New energy vehicle exports hit \keydata{1.73 million units} in 2024, up \keydata{55\%} year-on-year.
+\end{itemize}
+
+\newpage
+
+%================== Table of Contents ==================%
+\tableofcontents
+\newpage
+
+%================== Chapter 1 Introduction ==================%
+\section{Introduction}
+
+\subsection{Research Background}
+Briefly introduce the research background and current industry landscape.
+
+\subsection{Research Objectives and Significance}
+Explain the research goals and value.
+
+\subsection{Research Scope and Methodology}
+Describe research boundaries and methodologies.
+
+%================== Chapter 2 Industry Overview ==================%
+\section{Industry Overview}
+
+\subsection{Industry Definition and Classification}
+New energy vehicles are powered entirely or primarily by new energy powertrains.
+
+\begin{table}[H]
+\centering
+\caption{New Energy Vehicle Classification System}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Classification Dimension} & \textbf{Specific Category} & \textbf{Key Characteristics} \\
+\midrule
+\multirow{3}{*}{Powertrain Type} & Battery Electric Vehicle (BEV) & Zero emissions, range 400–700 km \\
+ & Plug-in Hybrid (PHEV) & Electric + fuel, pure electric range 50–150 km \\
+ & Fuel Cell (FCEV) & Hydrogen fuel, 3-minute refueling \\
+\midrule
+\multirow{2}{*}{Usage Category} & Passenger vehicle & Personal use, 89\% share \\
+ & Commercial vehicle & Public transit, logistics, etc. \\
+\bottomrule
+\end{tabular}\\
+\datasource{China Association of Automobile Manufacturers}{New Energy Vehicle Technology Classification Standard}
+\end{table}
+
+\subsection{Industry Development History and Life Cycle}
+Analyze development stages and current positioning.
+
+\subsection{Industry Characteristics}
+Summarize major traits such as technology intensity and capital intensity.
+
+%================== Chapter 3 Macro Environment Analysis (PEST) ==================%
+\section{Macro Environment Analysis}
+
+\subsection{Policy Environment}
+Evaluate industrial policies, subsidies, and environmental regulations.
+
+\subsection{Economic Environment}
+Assess macroeconomic context and cost-benefit improvements.
+
+\subsection{Social Environment}
+Discuss shifts in consumer attitudes, demographics, and other social factors.
+
+\subsection{Technological Environment}
+Analyze breakthroughs in core technologies and integration with intelligent systems.
+
+%================== Chapter 4 Market Size and Growth Trend ==================%
+\section{Market Size and Growth Trend}
+
+\subsection{Overall Market Size}
+In 2024, China's new energy vehicle sales reached \keydata{11.56 million units}, up \keydata{28.5\%} year-on-year.
+
+\subsection{Segment Structure}
+Analyze market composition by powertrain and usage categories.
+
+\subsection{Regional Distribution}
+Examine differences among tier-one, tier-two, tier-three/four cities, and rural areas.
+
+\subsection{Future Growth Forecast}
+Project development trends for the next 3–5 years based on historical data.
+
+\subsection{Market Trend Visuals}
+Below is an example visualization of market data:
+
+\insertfigure{China_NEVI_Penetration_Trend_2020-2024.png}{0.8\textwidth}{New energy vehicle market penetration trend (2020–2024)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{China_NEVI_Company_Sales_Ranking_2024.png}
+\caption{2024 Sales comparison of major new energy vehicle companies}
+\datasource{China Association of Automobile Manufacturers}{Corporate production and sales data}
+\end{figure}
+
+\textbf{Chart Usage Notes:}
+\begin{itemize}
+  \item Use custom commands for quick insertion of formatted figures
+  \item Parameter 1: Filename (with extension)
+  \item Parameter 2: Image width control
+  \item Parameter 3: Figure caption
+  \item All figures automatically include data source annotations
+  \item Supports PNG, JPG, PDF formats
+\end{itemize}
+
+\textbf{Additional Chart Example:}
+
+\insertfigure{China_NEVI_Charging_vs_Fleet_2020-2024.png}{0.85\textwidth}{Figure 3: Charging infrastructure vs. vehicle stock (2020–2024)}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{China_NEVI_Exports_Trend_2020-2024.png}
+\caption{Figure 4: China new energy vehicle export trend (2020–2024)}
+\datasource{General Administration of Customs}{Historical export statistics}
+\end{figure}
+
+\noindent\textbf{Chart Design Tips:}
+\begin{enumerate}
+  \item \textbf{Clarity}: Ensure adequate resolution for legible text
+  \item \textbf{Consistency}: Maintain uniform color palette and fonts
+  \item \textbf{Data Accuracy}: Align chart data with the text
+  \item \textbf{Source Labels}: Cite data sources for every chart
+  \item \textbf{Numbering}: Use the format "Figure X:" for consistency
+\end{enumerate}
+
+%================== Chapter x Conclusions and Recommendations ==================%
+\section{Conclusions and Recommendations}
+
+\subsection{Core Conclusions}
+Summarize the industry's new development stage and the clarified competitive landscape.
+
+\subsection{Strategic Recommendations}
+Offer suggestions for government, enterprises, and investors.
+
+\subsection{Risk Alerts}
+Highlight short-term and long-term risks and investment strategy advice.
+
+%================== Chapter x References ==================%
+\section{References and Data Sources}
+
+\subsection{Primary Data Sources}
+List key data types, source institutions, and credibility assessments.
+
+\subsection{Bibliography}
+Provide the complete reference list.
+
+\subsection{Research Methods and Models}
+Explain methodologies such as PEST analysis and Porter's Five Forces.
+
+%================== Chapter x Disclaimer ==================%
+
+\section{Disclaimer}
+Include disclaimers and usage guidance.
+
+\end{document}
+
+**Report Generation Workflow:**
+**Note:** After every research and analysis session, you **must** save the final investigation results with figures and tables as a `.tex` file. More details see the rules below.  
+1. Finish all information searches and data analysis
+2. Create all charts and save as PNG files
+3. Draft the LaTeX report following the standard structure
+4. Use the code-runner to save the LaTeX file (compilation to PDF happens automatically after saving)
+
+**File Naming Conventions:**
+- LaTeX: `{Topic}_Report.tex`
+- PDF: `{Topic}_Report.pdf`
+- Figures: `{Topic}_{ChartType}_{Index}.png`
+
+Example: `China_NEVI_Market_Report.tex`
+
+## Special Scenarios Handling
+- **Missing Data:** State "No data found for XX; searched: [list search scope]" and provide alternative angles or related data.
+- **Conflicting Data:** Present differing sources and note the discrepancies: "Source A shows X, Source B shows Y; differences may arise because..."
+- **Sensitive Topics:** Stay objective and neutral. Avoid subjective judgments; focus on data and facts.
+- **Timeliness:** When using data older than 6 months, label it as "Historical Data" and warn about potential obsolescence.
+
+Deliver accurate, professional, and insightful business analysis while maintaining enterprise-level standards."""
+```
+
+
+## Getting Started with the Kimi K2.5 API
+
+### Install the OpenAI SDK
+
+```python
+pip3 install --upgrade 'openai>=1.0'
+# Verify installation with the following command
+python3 -c 'import openai; print("version =",openai.__version__)'
+# The output might be version = 1.10.0, indicating the OpenAI SDK was installed successfully and your Python interpreter is using openai version 1.10.0
+```
+
+### Environment Setup
+
+Before you start, please make sure to configure your API_KEY as an environment variable:
+
+```python
+export MOONSHOT_BASE_URL="https://api.moonshot.ai/v1" # The base_url for your requested API
+export MOONSHOT_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxx"  # Replace with your actual api_key
+```
+Also, please ensure the following dependencies are installed:
+```python
+pip3 install openai httpx akshare pandas numpy matplotlib seaborn glob
+
+# macOS
+brew install --cask mactex
+sudo tlmgr update --self
+sudo tlmgr install ctex fontspec
+xelatex --version
+
+# Windows
+choco install texlive -y
+tlmgr update --self
+tlmgr install xetex ctex fontspec
+xelatex --version
+```
+
+### Complete Code Example
+
+```python 
+import os
+import json
+import asyncio
+import argparse
+import subprocess
+import sys
+import httpx
+import pandas as pd
+import akshare as ak
+from openai import AsyncOpenAI
+import glob
+
+SYSTEM_PROMPT = r""" Add your system prompt here """
+TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_us_stock_index",
+            "description": "Get US stock index historical market data. Call this tool when the user requests US stock index data or market information.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "symbol": {
+                        "type": "string",
+                        "description": "US stock index symbol. Must be one of: '.IXIC' (NASDAQ Composite), '.DJI' (Dow Jones Industrial Average), '.INX' (S&P 500), '.NDX' (NASDAQ 100). Default is '.INX' if not specified.",
+                        "enum": [".IXIC", ".DJI", ".INX", ".NDX"]
+                    }
+                },
+                "required": ["symbol"]
+            }
+        }
+    }
+]
+
+common_code = """
+import matplotlib.pyplot as plt
+import matplotlib
+import pandas as pd
+import numpy as np
+import seaborn as sns
+from datetime import datetime, timedelta
+import os
+import json
+
+"""
+
+def get_us_stock_index(symbol: str) -> str:
+    """Call the AKShare API to get US stock index historical market data"""
+    try:
+        symbol = (symbol or ".INX").strip()
+        
+        # Validate symbol
+        valid_symbols = [".IXIC", ".DJI", ".INX", ".NDX"]
+        if symbol not in valid_symbols:
+            return (
+                f"Invalid index symbol '{symbol}'. "
+                f"Valid symbols are: {', '.join(valid_symbols)}. "
+                f"Symbol meanings: .IXIC (NASDAQ Composite), .DJI (Dow Jones), "
+                f".INX (S&P 500), .NDX (NASDAQ 100)"
+            )
+
+        # Get index historical data
+        index_df = ak.index_us_stock_sina(symbol=symbol)
+        
+        if index_df is None or index_df.empty:
+            return (
+                f"Unable to retrieve index data for '{symbol}' right now. "
+                "Please try again later."
+            )
+
+        # Convert DataFrame to records and limit to recent data if too large
+        max_records = 1000
+        if len(index_df) > max_records:
+            # Get most recent records
+            index_df = index_df.tail(max_records)
+            truncated = True
+        else:
+            truncated = False
+
+        # Convert to list of records
+        records = index_df.to_dict(orient="records")
+        
+        result = {
+            "index_symbol": symbol,
+            "index_name": {
+                ".IXIC": "NASDAQ Composite Index",
+                ".DJI": "Dow Jones Industrial Average",
+                ".INX": "S&P 500 Index",
+                ".NDX": "NASDAQ 100 Index"
+            }.get(symbol, "Unknown Index"),
+            "total_records": len(index_df),
+            "data": records
+        }
+        
+        if truncated:
+            result["note"] = (
+                f"Returned most recent {max_records} records. "
+                f"Total available records: {len(ak.index_us_stock_sina(symbol=symbol))}"
+            )
+        
+        # Add summary statistics
+        if len(index_df) > 0:
+            latest_close = index_df["close"].iloc[-1]
+            latest_volume = index_df["volume"].iloc[-1]
+            latest_amount = index_df["amount"].iloc[-1]
+            
+            result["summary"] = {
+                "date_range": {
+                    "start": str(index_df["date"].iloc[0]),
+                    "end": str(index_df["date"].iloc[-1])
+                },
+                "latest_close": float(latest_close) if pd.notna(latest_close) else None,
+                "latest_volume": float(latest_volume) if pd.notna(latest_volume) else None,
+                "latest_amount": float(latest_amount) if pd.notna(latest_amount) else None
+            }
+
+        return json.dumps(result, ensure_ascii=False, indent=2, default=str)
+
+    except Exception as e:
+        return f"Error getting index data: {str(e)}"
+
+class FormulaChatClient:
+    def __init__(self, moonshot_base_url: str, api_key: str):
+        self.openai = AsyncOpenAI(base_url=moonshot_base_url, api_key=api_key)
+        self.httpx = httpx.AsyncClient(
+            base_url=moonshot_base_url,
+            headers={"Authorization": f"Bearer {api_key}"},
+            timeout=30.0,
+        )
+        self.model = "kimi-k2.5"
+        self.max_tokens = 32768
+        self.local_execution_keywords = ["plt.savefig", "plt.save", ".to_excel", "open(", ".to_csv", "pdf.", ".tex"]
+
+    async def get_tools(self, formula_uri: str):
+        response = await self.httpx.get(f"/formulas/{formula_uri}/tools")
+        return response.json().get("tools", [])
+
+    async def call_tool(self, formula_uri: str, function: str, args: dict):
+        response = await self.httpx.post(
+            f"/formulas/{formula_uri}/fibers",
+            json={"name": function, "arguments": json.dumps(args)},
+        )
+        fiber = response.json()
+
+        if fiber.get("status") == "succeeded":
+            return fiber["context"].get("output") or fiber["context"].get("encrypted_output")
+
+        # Handle errors
+        error_msg = fiber.get("error") or fiber.get("context", {}).get("error") or \
+                    fiber.get("context", {}).get("output") or "Unknown error"
+        return f"Error: {error_msg}"
+
+    async def handle_response(self, response, messages, all_tools, tool_to_uri):
+        message = response.choices[0].message
+        messages.append(message)
+        
+        if not message.tool_calls:
+            print(f"\n{message.content}")
+            return
+
+        print(f"\n[Calling tools: {len(message.tool_calls)} tools]")
+
+        for call in message.tool_calls:
+            func_name = call.function.name
+            args = json.loads(call.function.arguments)
+
+            print(f"→ {func_name}")
+            
+            # Handle custom tools
+            if func_name == "get_us_stock_index":
+                symbol = args.get("symbol", ".INX")
+                result = get_us_stock_index(symbol)
+                print(f"Index data: {result}")
+                messages.append({"role": "tool", "tool_call_id": call.id, "content": result})
+                continue
+            
+            # Handle remote formula tools
+            uri = tool_to_uri.get(func_name)
+            if not uri:
+                raise ValueError(f"No URI found for tool {func_name}")
+
+            if func_name == "code_runner":
+                self.execute_code_runner(args)
+
+            result = await self.call_tool(uri, func_name, args)
+            messages.append({"role": "tool", "tool_call_id": call.id, "content": result})
+
+        next_response = await self.openai.chat.completions.create(
+            model=self.model, messages=messages, tools=all_tools, max_tokens=self.max_tokens
+        )
+        await self.handle_response(next_response, messages, all_tools, tool_to_uri)
+
+    def convert_tex_to_pdf(self, tex_file):
+        pdf_file = tex_file.replace('.tex', '.pdf')
+        # Get the directory of the tex file
+        work_dir = os.path.dirname(os.path.abspath(tex_file))
+        tex_name = os.path.basename(tex_file)
+        
+        try:
+            # Two compilations to ensure cross-references and other information are correct
+            for _ in range(2):
+                subprocess.run(
+                    ['xelatex', '-interaction=nonstopmode', tex_file],
+                    capture_output=True,
+                    text=True,
+                    cwd=work_dir if work_dir else '.',
+                )
+            for ext in ['.aux', '.log', '.out']:
+                temp_file = os.path.join(work_dir if work_dir else '.', tex_name.replace('.tex', ext))
+                if os.path.exists(temp_file):
+                    try:
+                        os.remove(temp_file)
+                    except Exception:
+                        pass
+            print(f"  [PDF generated: {pdf_file}]")
+        except FileNotFoundError:
+            print("  [PDF conversion failed: xelatex not installed]")
+        except subprocess.CalledProcessError as e:
+            print("  [PDF conversion failed: LaTeX compilation error]")
+            if e.stdout:
+                print(f"  Error output: {e.stdout[-500:]}")
+        except Exception as e:
+            print(f"  [PDF conversion failed: {str(e)}]")
+
+    def execute_code_runner(self, args):
+        code = args.get("code", "") if isinstance(args, dict) else str(args or "")
+        
+        if not code or not any(keyword in code for keyword in self.local_execution_keywords):
+            return
+        before_tex_files = set(glob.glob('*.tex'))
+        try:
+            subprocess.run(
+                [sys.executable, "-c", common_code+code],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            after_tex_files = set(glob.glob('*.tex'))
+            new_tex_files = after_tex_files - before_tex_files
+            for tex_file in new_tex_files:
+                self.convert_tex_to_pdf(tex_file)
+                
+        except Exception as e:
+            print(f"  [Local execution failed: {e}]")
+
+    async def chat(self, question, messages, all_tools, tool_to_uri):
+        messages.append({"role": "user", "content": question})
+        response = await self.openai.chat.completions.create(
+            model=self.model, messages=messages, tools=all_tools, max_tokens=self.max_tokens
+        )
+        await self.handle_response(response, messages, all_tools, tool_to_uri)
+
+    async def close(self):
+        await self.httpx.aclose()
+
+
+def normalize_formula_uri(uri: str) -> str:
+    """Normalize formula URI with default namespace and tag"""
+    if "/" not in uri:
+        uri = f"moonshot/{uri}"
+    if ":" not in uri:
+        uri = f"{uri}:latest"
+    return uri
+
+
+async def main():
+    parser = argparse.ArgumentParser(description="Formula chat client")
+    parser.add_argument(
+        "--formula",
+        action="append",
+        default=["moonshot/web-search:latest", "moonshot/rethink:latest", "moonshot/code-runner:latest"],
+        help="Formula URIs",
+    )
+    parser.add_argument("--question", help="Question to ask")
+
+    args = parser.parse_args()
+
+    # Process and deduplicate formula URIs
+    normalized_formulas = [normalize_formula_uri(uri) for uri in args.formula]
+    unique_formulas = list(dict.fromkeys(normalized_formulas))
+
+    moonshot_base_url = os.getenv("MOONSHOT_BASE_URL", "https://api.moonshot.ai/v1")
+    api_key = os.getenv("MOONSHOT_API_KEY")
+
+    if not api_key:
+        print("Error: MOONSHOT_API_KEY environment variable is required")
+        return
+
+    client = FormulaChatClient(moonshot_base_url, api_key)
+
+    # Load tools
+    all_tools = []
+    tool_to_uri = {}
+
+    for tool in TOOLS:
+        func = tool.get("function")
+        if func:
+            func_name = func.get("name")
+            all_tools.append(tool)
+            tool_to_uri[func_name] = "custom"
+
+    for uri in unique_formulas:
+        tools = await client.get_tools(uri)
+        for tool in tools:
+            func = tool.get("function")
+            if not func:
+                continue
+            
+            func_name = func.get("name")
+            if not func_name or func_name in tool_to_uri:
+                continue
+
+            all_tools.append(tool)
+            tool_to_uri[func_name] = uri
+
+    if not all_tools:
+        print("Error: No tools loaded")
+        return
+
+    print(f"Loaded {len(all_tools)} tools")
+
+    try:
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        
+        if args.question:
+            print(f"\nQuestion: {args.question}")
+            await client.chat(args.question, messages, all_tools, tool_to_uri)
+        else:
+            print("\nDialog mode (enter 'q' to exit)\n")
+            while True:
+                question = input("Q: ").strip()
+                if question.lower() == "q":
+                    break
+                if question:
+                    await client.chat(question, messages, all_tools, tool_to_uri)
+
+    finally:
+        await client.close()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+``` 
+
+You can use the above sample for the system prompt or modify it to suit your needs. Once the program is running, you can interact with Kimi K2.5, who will automatically handle the industry information processing. The generated files will be saved in the local directory.  
+
+### Example of Running the Program
+
+#### Research and Report Writing
+
+After launching the program, we give the following instruction to Kimi K2.5 in the terminal and wait briefly:  
+
+```shell
+Q: Look into how the humanoid-robot scene has evolved from 2023 through 2025 for me.
+```
+The following reply was received (as can be seen, this is the executive summary of the report):
+
+```shell 
+## Humanoid Robot Industry Evolution Analysis: 2023-2025
+
+I've conducted a comprehensive analysis of the humanoid robot industry's dramatic evolution from 2023 through 2025. Here are the key findings:
+
+### Executive Summary
+
+The humanoid robot industry has experienced unprecedented transformation during 2023-2025, evolving from experimental prototypes to commercial deployments across multiple sectors. This period marks the critical inflection point where the technology transitioned from research curiosity to practical industrial tool.
+
+**Key Findings:**
+- **Market Growth**: Explosive expansion from $2.37 billion (2023) to $7.8 billion (2025) - a 65% CAGR
+- **Cost Revolution**: Dramatic price reduction from $250,000 (2023) to $80,000 (2025) per unit
+- **Commercial Breakthrough**: First real-world deployments in 2024 with BMW, Mercedes, Tesla leading
+- **China's Emergence**: Government-backed $25 billion investment creating formidable competition
+- **Technology Leap**: Battery life improved from 2 to 8 hours; AI capabilities advanced significantly
+- **Scale Achievement**: Global deployment increased from 500 units (2023) to 50,000 projected (2025)
+
+### Major Technological Breakthroughs
+
+**AI Integration Revolution**: The most significant advancement has been integrating large language models with physical robotics. Figure AI's OpenAI partnership enabled real-time conversational interaction, while Boston Dynamics' NVIDIA collaboration introduced Large Behavior Models for autonomous whole-body control.
+
+**Hardware Optimization**: Tesla's Optimus Gen 2 achieved 30% faster walking with 10kg weight reduction, while Unitree's G1 broke the $6,000 price barrier - a 70% cost reduction from competitors.
+
+**Safety Certification**: Agility Robotics is targeting the first safety-certified humanoid robot by end of 2025, essential for human-robot collaborative environments.
+
+### Competitive Landscape Transformation
+
+**Market Leaders**:
+- **Tesla**: Mass-market strategy leveraging automotive expertise, targeting $20,000-$30,000 pricing
+- **Boston Dynamics**: Technology benchmark with Atlas, focusing on advanced capabilities
+- **Figure AI**: AI-first approach with $39 billion valuation and rapid development cycles
+- **Agility Robotics**: First commercial deployment with Digit in warehouse operations
+
+**China's Rapid Ascent**: Chinese companies have gained significant market share through government support and aggressive pricing. UBTECH established partnerships with major automotive manufacturers, while Unitree achieved breakthrough cost reductions.
+
+### Commercial Deployment Reality
+
+**Manufacturing Leadership**: BMW's partnership with Figure AI achieved the first sustained commercial deployment. Tesla integrated Optimus into battery sorting operations, while Mercedes tested Apptronik's Apollo for factory tasks.
+
+**Logistics Validation**: Amazon's testing of Agility Robotics' Digit validated warehouse applications, with GXO signing multi-year commercial agreements.
+
+**Healthcare Caution**: Progress has been slower due to safety requirements, though Japan and China deployed robots in nursing homes for eldercare applications.
+
+### Regional Competitive Dynamics
+
+**North America** (35% market share): Maintains leadership through technological innovation and substantial private investment, though market share declined from 40% due to increased global competition.
+
+**China** (30% market share): Dramatic growth from 25% through government backing and rapid scaling capabilities.
+
+**Europe** (20% market share): Focus on safety standards and regulatory frameworks, with strength in industrial applications.  
+
+### Future Outlook
+
+**Technology Trajectory**: Continued AI advancement, battery life extension to 12-16 hours by 2026-2027, and further cost reductions to $30,000-$50,000 price points.  
+
+**Market Expansion**: Acceleration beyond industrial applications into healthcare, retail, and hospitality sectors, with consumer market potential after 2028-2030.  
+
+**Competitive Evolution**: Market consolidation around successful platforms, with Chinese companies gaining share through cost advantages.
+
+### Key Insights
+
+1. **The industry has achieved critical mass** - moving from demonstration to deployment phase
+2. **Cost reduction has been transformative** - making economic viability achievable
+3. **AI integration is the key differentiator** - separating leaders from followers
+4. **China represents genuine competitive threat** - through government support and aggressive pricing
+5. **Safety certification remains the final barrier** - for widespread deployment
+6. **Manufacturing applications lead adoption** - due to clear economic benefits
+7. **Consumer market remains distant** - requiring further cost and capability improvements
+
+The humanoid robot industry has achieved remarkable maturation from 2023-2025, but significant challenges remain. The transition from promise to reality is underway, but continued innovation, cost reduction, and safety validation will determine ultimate success. The next phase will likely see market consolidation and specialization, with winners emerging in specific application domains rather than general-purpose dominance.
+```  
+In addition, you can find the complete report in PDF format in the directory:
+
+[Complete Report](https://statics.moonshot.cn/platform/Humanoid_Robot_Evolution_Report.pdf)
+
+#### Frequently Asked Questions (FAQ)  
+The case code above is just a simple trial that still needs supplementation and improvement, so you may encounter some issues when running it. Solutions to these problems can be found below *(continuously updated)*:
+- code-runner cyclic invocation errors:
+  - Save `response.json` and check if the format is correct.  
+  - If the format is correct, focus on the key fields. If you find `"finish_reason"` is `"length"`, it means the current `max_tokens` per dialog round is too small (the code currently sets this at 32k; you can adjust it as needed).  
+  - If it's not a length issue, extract the `"code"` content from the `"arguments"`, i.e., the original generated code, and try running it. You can also improve code quality through prompt optimization and other means.  
+
+## Evaluation and Optimization
+
+By following the steps above, we can already use Kimi K2.5 to effectively complete industry information collation tasks. In more complex scenarios, you can further optimize Kimi K2.5's performance in the following ways:  
+
+### Use Suitable Tool Calls
+In addition to Kimi K2.5’s official tools, you can define and execute custom tools as needed. For example, to query US stock indices, you can design and use a corresponding tool as shown in the example below.  
+
+#### Tool Definition
+
+By describing our tool definitions using JSON Schema, we make it clearer and more intuitive for the Kimi K2.5 large model to understand what parameters our tool needs and the type and description of each parameter.
+
+```python 
+TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_us_stock_index",
+            "description": "Get US stock index historical market data. Call this tool when the user requests US stock index data or market information.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "symbol": {
+                        "type": "string",
+                        "description": "US stock index symbol. Must be one of: '.IXIC' (NASDAQ Composite), '.DJI' (Dow Jones Industrial Average), '.INX' (S&P 500), '.NDX' (NASDAQ 100). Default is '.INX' if not specified.",
+                        "enum": [".IXIC", ".DJI", ".INX", ".NDX"]
+                    }
+                },
+                "required": ["symbol"]
+            }
+        }
+    }
+]
+``` 
+Here we have created a tool named `get_us_stock_index`, describing to the large model its use case and the required parameter `symbol` (US stock index symbol).
+
+#### Tool Execution
+
+Next, we need to implement the query function by adding the following function to the original code:
+
+```python 
+def get_us_stock_index(symbol: str) -> str:
+    """Call the AKShare API to get US stock index historical market data"""
+    try:
+        symbol = (symbol or ".INX").strip()
+        
+        # Validate symbol
+        valid_symbols = [".IXIC", ".DJI", ".INX", ".NDX"]
+        if symbol not in valid_symbols:
+            return (
+                f"Invalid index symbol '{symbol}'. "
+                f"Valid symbols are: {', '.join(valid_symbols)}. "
+                f"Symbol meanings: .IXIC (NASDAQ Composite), .DJI (Dow Jones), "
+                f".INX (S&P 500), .NDX (NASDAQ 100)"
+            )
+
+        # Get index historical data
+        index_df = ak.index_us_stock_sina(symbol=symbol)
+        
+        if index_df is None or index_df.empty:
+            return (
+                f"Unable to retrieve index data for '{symbol}' right now. "
+                "Please try again later."
+            )
+
+        # Convert DataFrame to records and limit to recent data if too large
+        max_records = 1000
+        if len(index_df) > max_records:
+            # Get most recent records
+            index_df = index_df.tail(max_records)
+            truncated = True
+        else:
+            truncated = False
+
+        # Convert to list of records
+        records = index_df.to_dict(orient="records")
+        
+        result = {
+            "index_symbol": symbol,
+            "index_name": {
+                ".IXIC": "NASDAQ Composite Index",
+                ".DJI": "Dow Jones Industrial Average",
+                ".INX": "S&P 500 Index",
+                ".NDX": "NASDAQ 100 Index"
+            }.get(symbol, "Unknown Index"),
+            "total_records": len(index_df),
+            "data": records
+        }
+        
+        if truncated:
+            result["note"] = (
+                f"Returned most recent {max_records} records. "
+                f"Total available records: {len(ak.index_us_stock_sina(symbol=symbol))}"
+            )
+        
+        # Add summary statistics
+        if len(index_df) > 0:
+            latest_close = index_df["close"].iloc[-1]
+            latest_volume = index_df["volume"].iloc[-1]
+            latest_amount = index_df["amount"].iloc[-1]
+            
+            result["summary"] = {
+                "date_range": {
+                    "start": str(index_df["date"].iloc[0]),
+                    "end": str(index_df["date"].iloc[-1])
+                },
+                "latest_close": float(latest_close) if pd.notna(latest_close) else None,
+                "latest_volume": float(latest_volume) if pd.notna(latest_volume) else None,
+                "latest_amount": float(latest_amount) if pd.notna(latest_amount) else None
+            }
+
+        return json.dumps(result, ensure_ascii=False, indent=2, default=str)
+
+    except Exception as e:
+        return f"Error getting index data: {str(e)}"
+
+``` 
+#### Registering the Tool
+
+Additionally, by supplementing the tool registration at the corresponding location, we enable the model to automatically call our newly defined tool:
+```python 
+for call in message.tool_calls:
+            func_name = call.function.name
+            args = json.loads(call.function.arguments)
+
+            print(f"→ {func_name}")
+            
+            # Handle custom tools
+            if func_name == "get_us_stock_index":
+                symbol = args.get("symbol", ".INX")
+                result = get_us_stock_index(symbol)
+                print(f"Index data: {result}")
+                messages.append({"role": "tool", "tool_call_id": call.id, "content": result})
+                continue
+            
+            # Handle remote formula tools
+            uri = tool_to_uri.get(func_name)
+            if not uri:
+                raise ValueError(f"No URI found for tool {func_name}")
+
+            if func_name == "code_runner":
+                self.execute_code_runner(args)
+
+            result = await self.call_tool(uri, func_name, args)
+            messages.append({"role": "tool", "tool_call_id": call.id, "content": result})
+            
+``` 
+The complete code above has already integrated this tool. After running, you can initiate a conversation to test its functionality:  
+
+```shell 
+Q: Can you give me a summary of how the Nasdaq Index has performed so far in 2025?
+
+[Calling tools: 1 tools]
+→ get_us_stock_index
+...
+{
+    {
+      "date": "2025-11-10",
+      "open": 23354.8535,
+      "high": 23569.6152,
+      "low": 23290.0547,
+      "close": 23527.1738,
+      "volume": 8145563750,
+      "amount": 0
+    },
+    {
+      "date": "2025-11-11",
+      "open": 23407.7227,
+      "high": 23508.4434,
+      "low": 23315.2754,
+      "close": 23468.3008,
+      "volume": 6375737231,
+      "amount": 0
+    }
+  ,
+  "note": "Returned most recent 1000 records. Total available records: 5501",
+  "summary": {
+    "date_range": {
+      "start": "2021-11-17",
+      "end": "2025-11-11"
+    },
+    "latest_close": 23468.3008,
+    "latest_volume": 6375737231.0,
+    "latest_amount": 0.0
+    }
+}
+```
+
+After using the tool to query stock index data across the full time range, Kimi K2.5 also automatically invoked the charting tool to plot the selected time-range data as a line chart.
+
+```shell 
+
+AI Response：
+## Summary: Nasdaq Index Performance in 2025
+
+Based on the latest data through November 11, 2025, the **Nasdaq Composite Index has delivered exceptional performance** this year:
+
+### 🎯 **Key Performance Metrics**
+- **Year-to-Date Return**: +21.7% (from 19,281 to 23,468)
+- **Current Level**: 23,468 (as of November 11, 2025)
+- **Performance**: Strongly outperforming most major indices
+
+### 📈 **2025 Market Characteristics**
+
+**Driving Forces:**
+- **AI Revolution**: Artificial Intelligence stocks leading massive gains
+- **Semiconductor Boom**: Chip companies driving significant index appreciation  
+- **Mega-Cap Strength**: Apple, Microsoft, Google, Amazon contributing substantially
+- **Tech Dominance**: Information Technology sector leading all sectors
+
+**Market Behavior:**
+- Reached multiple **new all-time highs** above 24,000
+- Experienced significant **daily volatility** with 1-3% swings
+- Showed **resilience** despite economic headwinds
+- Demonstrated **strong institutional participation**
+
+### 🔍 **Technical Observations**
+- Maintained support above key moving averages
+- Volume patterns indicating strong buyer interest
+- Multiple breakout moments throughout the year
+- Strong momentum in growth-oriented sectors
+
+### 💡 **Investment Insights**
+2025 has been a **banner year** for technology investors, with the Nasdaq delivering exceptional returns driven by the AI revolution and continued digital transformation. The index has shown both strong appreciation and significant volatility, creating opportunities for both long-term investors and active traders.
+
+**[Source: Market Data / Nasdaq Composite Index real-time data through November 11, 2025]**
+``` 
+
+
+![nasdaq_2025_performance](/docs/guide/nasdaq_2025_performance.png)
+
+In this way, we can define many commonly used functions as tools, which will significantly enhance the output quality of large language models.
