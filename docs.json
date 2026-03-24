@@ -54,6 +54,15 @@
               "src/pages/guide/org-best-practice.en-US",
               "src/pages/guide/faq.en-US"
             ]
+          },
+          {
+            "group": "Product Pricing",
+            "pages": [
+              "src/pages/pricing/chat.en-US",
+              "src/pages/pricing/tools.en-US",
+              "src/pages/pricing/limits.en-US",
+              "src/pages/pricing/faq.en-US"
+            ]
           }
         ]
       },
@@ -78,17 +87,7 @@
         ]
       },
       {
-        "tab": "Pricing",
-        "pages": [
-          "src/pages/pricing/chat.en-US",
-          "src/pages/pricing/tools.en-US",
-          "src/pages/pricing/limits.en-US",
-          "src/pages/pricing/faq.en-US",
-          {
-            "group": "Product Pricing",
-            "pages": []
-          }
-        ]
+        "tab": "Pricing"
       },
       {
         "tab": "Guides_ex",
