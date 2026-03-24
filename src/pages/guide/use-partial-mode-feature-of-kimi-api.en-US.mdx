@@ -9,7 +9,7 @@ import { Tabs } from 'nextra/components'
 Sometimes, we want the Kimi large language model to continue a given sentence. For example, in some customer service scenarios, we want the smart robot to start every sentence with "Dear customer, hello." For such needs, the Kimi API offers Partial Mode. Let's use specific code to explain how Partial Mode works:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
     
@@ -35,7 +35,7 @@ Sometimes, we want the Kimi large language model to continue a given sentence. F
     print("Dear customer, hello," + completion.choices[0].message.content)
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require('openai')
      
