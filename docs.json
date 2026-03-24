@@ -25,21 +25,11 @@
           "src/pages/overview.en-US",
           "src/pages/introduction.en-US",
           {
-            "group": "Product Pricing",
-            "pages": [
-              "src/pages/pricing/chat.en-US",
-              "src/pages/pricing/tools.en-US",
-              "src/pages/pricing/limits.en-US",
-              "src/pages/pricing/faq.en-US"
-            ]
-          },
-          {
             "group": "Getting Started Guide",
             "pages": [
               "src/pages/guide/kimi-k2-5-quickstart.en-US",
               "src/pages/guide/kimi-k2-quickstart.en-US",
               "src/pages/guide/use-kimi-k2-thinking-model.en-US",
-              "src/pages/guide/agent-support.en-US",
               "src/pages/guide/start-using-kimi-api.en-US",
               "src/pages/guide/use-kimi-in-openclaw.en-US",
               "src/pages/guide/migrating-from-openai-to-kimi.en-US",
@@ -51,7 +41,32 @@
               "src/pages/guide/use-kimi-api-to-complete-tool-calls.en-US",
               "src/pages/guide/use-web-search.en-US",
               "src/pages/guide/use-json-mode-feature-of-kimi-api.en-US",
-              "src/pages/guide/use-partial-mode-feature-of-kimi-api.en-US"
+              "src/pages/guide/use-partial-mode-feature-of-kimi-api.en-US",
+              "src/pages/guide/use-playground-to-debug-the-model.en-US",
+              "src/pages/guide/use-kimi-api-for-file-based-qa.en-US",
+              "src/pages/guide/agent-support.en-US",
+              "src/pages/guide/configure-the-modelscope-mcp-server.en-US",
+              "src/pages/guide/use-official-tools.en-US",
+              "src/pages/guide/kimi-cli-support.en-US",
+              "src/pages/guide/use-kimi-k2-to-setup-agent.en-US",
+              "src/pages/guide/benchmark-best-practice.en-US",
+              "src/pages/guide/prompt-best-practice.en-US",
+              "src/pages/guide/org-best-practice.en-US",
+              "src/pages/guide/faq.en-US"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Pricing",
+        "pages": [
+          {
+            "group": "Product Pricing",
+            "pages": [
+              "src/pages/pricing/chat.en-US",
+              "src/pages/pricing/tools.en-US",
+              "src/pages/pricing/limits.en-US",
+              "src/pages/pricing/faq.en-US"
             ]
           }
         ]

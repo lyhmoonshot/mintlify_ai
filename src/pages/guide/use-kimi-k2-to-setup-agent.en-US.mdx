@@ -1,75 +1,84 @@
-# Use Kimi K2.5 Model to Setup Agent
+---
+title: "Use Kimi K2.5 Model to Setup Agent"
+---
 
 With Kimi K2.5's powerful coding and agent capabilities, you can quickly build and deploy customized professional agents to independently accomplish work tasks. Here, we use the scenario of industry information organization to demonstrate the process.
 
 ## Break Down the Task
+
 Before building an agent with Kimi K2.5, you can break down the target task, which helps with prompt engineering and tool selection, thus optimizing agent performance.
 
-In the context of industry information organization, you might encounter the following tasks: 
-- Search  
+In the context of industry information organization, you might encounter the following tasks:
+
+- Search
   - Search for company information, latest data, news reports, etc. online
-- Analysis  
-  - Filter large amounts of collected information  
-  - Classify and professionally analyze the information  
-- Integration/Output  
-  - Present analysis results in a visually appealing way (such as csv/png/pdf)  
-  - Generate charts  
+- Analysis
+  - Filter large amounts of collected information
+  - Classify and professionally analyze the information
+- Integration/Output
+  - Present analysis results in a visually appealing way (such as csv/png/pdf)
+  - Generate charts
 
-## Select Tools  
+## Select Tools
 
->Tool calls give the Kimi large language model the ability to perform specific actions. The Kimi large language model can engage in conversations and answer questions, which is its "talking" ability. Through tool calls, it also gains the ability to "do" things. With tool_calls, the Kimi large language model can help you search the internet, query databases, and even control smart home devices. -- from Kimi Official Docs
+> Tool calls give the Kimi large language model the ability to perform specific actions. The Kimi large language model can engage in conversations and answer questions, which is its "talking" ability. Through tool calls, it also gains the ability to "do" things. With tool\_calls, the Kimi large language model can help you search the internet, query databases, and even control smart home devices. -- from Kimi Official Docs
 
 Currently, Kimi K2.5 offers a series of official tools [(click here for the official tool usage documentation)](./use-official-tools), which can be freely integrated into your applications to fulfill various needs.
 
 | Tool Name | Tool Description |
-| :-----|:------|
+| :-- | :-- |
 | web-search | Real-time information and internet search tool. Web search is currently charged, please see [Web Search Price](/docs/pricing/tools.mdx) |
-| rethink | Intelligent reasoning tool | 
+| rethink | Intelligent reasoning tool |
 | random-choice | Random selection tool |
 | memory | Memory storage and retrieval system tool, supporting persistent storage of conversation history and user preferences |
-| excel | Excel and CSV file analysis tool | 
-| code_runner | Python code execution tool |
-| quickjs | Quick JS engine security execution JavaScript code tool | 
-| date | Date and time processing tool | 
+| excel | Excel and CSV file analysis tool |
+| code\_runner | Python code execution tool |
+| quickjs | Quick JS engine security execution JavaScript code tool |
+| date | Date and time processing tool |
 | fetch | URL content extraction Markdown formatting tool |
-| convert | Unit conversion tool, supporting length, mass, volume, temperature, area, time, energy, pressure, speed, and currency conversions | 
-| base64 | base64 encoding and decoding tool | 
-| mew | Random cat meowing and blessing tool | 
+| convert | Unit conversion tool, supporting length, mass, volume, temperature, area, time, energy, pressure, speed, and currency conversions |
+| base64 | base64 encoding and decoding tool |
+| mew | Random cat meowing and blessing tool |
 
 In this example, to accomplish the tasks of online search, analysis, and plotting, we use the `web-search`, `code_runner`, and `rethink` tools, which are responsible for searching, running code for plotting, and consolidating/analysing materials, respectively.
 
-### Automatic Tool Usage  
+### Automatic Tool Usage
 
-Note that after importing these tools, Kimi K2.5 will automatically analyze the need, decide whether to use certain tools, and execute them to complete the task. **There is no need** to specify the tools or their usage in the System Prompt, as this may actually interfere with Kimi K2.5’s autonomous decision-making.   
+Note that after importing these tools, Kimi K2.5 will automatically analyze the need, decide whether to use certain tools, and execute them to complete the task. **There is no need** to specify the tools or their usage in the System Prompt, as this may actually interfere with Kimi K2.5’s autonomous decision-making.
 
 ## Prompt Writing
-The System prompt is an initial instruction received by the model before generating a response, and **plays a critical role in determining the format, content, and style of the output**.    
 
-To ensure the model completes tasks at a high level, you should provide detailed and clear explanations in the prompt. The more detailed these instructions are, the less the model has to guess, and the better it will understand the task as you expect. Therefore, meticulously crafting and optimizing the system prompt **is a very important preparatory step**. The official Kimi documentation also provides [Best Practices for Prompts](./prompt-best-practice.mdx).  
+The System prompt is an initial instruction received by the model before generating a response, and **plays a critical role in determining the format, content, and style of the output**.
 
-### Practical Example  
+To ensure the model completes tasks at a high level, you should provide detailed and clear explanations in the prompt. The more detailed these instructions are, the less the model has to guess, and the better it will understand the task as you expect. Therefore, meticulously crafting and optimizing the system prompt **is a very important preparatory step**. The official Kimi documentation also provides [Best Practices for Prompts](./prompt-best-practice.mdx).
 
-Here is an example of the writing process for this scenario: 
+### Practical Example
 
-1. **Clarify the Business and User**  
-- Just as we did in the “Break Down the Task” section, separate the business flow into steps, define the user persona (such as expertise, terminology tolerance, required format and content, etc.). For the scenario, specify the model’s “Role–Goal–Action Priority”.   
+Here is an example of the writing process for this scenario:
 
-2. **Constraints and Style**  
-- Language consistency, objectivity, no fabrication, citation standards  
-  - To ensure data authenticity, require detailed source output, which can reduce hallucinations    
-- Style and structure: article formatting, chart color schemes, and formatting specifications    
-  - You may prescribe brand color schemes, formats, etc.   
+1. **Clarify the Business and User**
 
-3. **Output Structure and Templates**  
-- Provide a fixed framework    
+- Just as we did in the “Break Down the Task” section, separate the business flow into steps, define the user persona (such as expertise, terminology tolerance, required format and content, etc.). For the scenario, specify the model’s “Role–Goal–Action Priority”.
+
+2. **Constraints and Style**
+
+- Language consistency, objectivity, no fabrication, citation standards
+  - To ensure data authenticity, require detailed source output, which can reduce hallucinations
+- Style and structure: article formatting, chart color schemes, and formatting specifications
+  - You may prescribe brand color schemes, formats, etc.
+
+3. **Output Structure and Templates**
+
+- Provide a fixed framework
 - Define “allowed/disallowed actions” or “positive/negative examples”, to reduce ambiguity. (For example, “Do not fabricate full URLs; instead, allow providing search keywords as an alternative.”)
-  
-4. **Special Scenarios / Edge Cases**   
-- Provide handling examples for ambiguous questions or forbidden service scenarios, etc.  
+
+4. **Special Scenarios / Edge Cases**
+
+- Provide handling examples for ambiguous questions or forbidden service scenarios, etc.
 
 ### Usable Prompt Examples in This Scenario
 
-Below is a prompt example ready for direct use, containing the rules and report template. You may further customize it (colors, formatting, language style, information sourcing, etc.) if needed.  
+Below is a prompt example ready for direct use, containing the rules and report template. You may further customize it (colors, formatting, language style, information sourcing, etc.) if needed.
 
 ```shell
 SYSTEM_PROMPT = r"""# You are Kimi, a professional corporate industry research AI assistant skilled in information retrieval, data analysis, and business report generation.
@@ -492,7 +501,6 @@ Example: `China_NEVI_Market_Report.tex`
 Deliver accurate, professional, and insightful business analysis while maintaining enterprise-level standards."""
 ```
 
-
 ## Getting Started with the Kimi K2.5 API
 
 ### Install the OpenAI SDK
@@ -506,13 +514,15 @@ python3 -c 'import openai; print("version =",openai.__version__)'
 
 ### Environment Setup
 
-Before you start, please make sure to configure your API_KEY as an environment variable:
+Before you start, please make sure to configure your API\_KEY as an environment variable:
 
 ```python
 export MOONSHOT_BASE_URL="https://api.moonshot.ai/v1" # The base_url for your requested API
 export MOONSHOT_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxx"  # Replace with your actual api_key
 ```
+
 Also, please ensure the following dependencies are installed:
+
 ```python
 pip3 install openai httpx akshare pandas numpy matplotlib seaborn glob
 
@@ -531,7 +541,7 @@ xelatex --version
 
 ### Complete Code Example
 
-```python 
+```python
 import os
 import json
 import asyncio
@@ -874,22 +884,23 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-``` 
+```
 
-You can use the above sample for the system prompt or modify it to suit your needs. Once the program is running, you can interact with Kimi K2.5, who will automatically handle the industry information processing. The generated files will be saved in the local directory.  
+You can use the above sample for the system prompt or modify it to suit your needs. Once the program is running, you can interact with Kimi K2.5, who will automatically handle the industry information processing. The generated files will be saved in the local directory.
 
 ### Example of Running the Program
 
 #### Research and Report Writing
 
-After launching the program, we give the following instruction to Kimi K2.5 in the terminal and wait briefly:  
+After launching the program, we give the following instruction to Kimi K2.5 in the terminal and wait briefly:
 
 ```shell
 Q: Look into how the humanoid-robot scene has evolved from 2023 through 2025 for me.
 ```
+
 The following reply was received (as can be seen, this is the executive summary of the report):
 
-```shell 
+```shell
 ## Humanoid Robot Industry Evolution Analysis: 2023-2025
 
 I've conducted a comprehensive analysis of the humanoid robot industry's dramatic evolution from 2023 through 2025. Here are the key findings:
@@ -959,30 +970,34 @@ The humanoid robot industry has experienced unprecedented transformation during 
 7. **Consumer market remains distant** - requiring further cost and capability improvements
 
 The humanoid robot industry has achieved remarkable maturation from 2023-2025, but significant challenges remain. The transition from promise to reality is underway, but continued innovation, cost reduction, and safety validation will determine ultimate success. The next phase will likely see market consolidation and specialization, with winners emerging in specific application domains rather than general-purpose dominance.
-```  
+```
+
 In addition, you can find the complete report in PDF format in the directory:
 
 [Complete Report](https://statics.moonshot.cn/platform/Humanoid_Robot_Evolution_Report.pdf)
 
-#### Frequently Asked Questions (FAQ)  
-The case code above is just a simple trial that still needs supplementation and improvement, so you may encounter some issues when running it. Solutions to these problems can be found below *(continuously updated)*:
+#### Frequently Asked Questions (FAQ)
+
+The case code above is just a simple trial that still needs supplementation and improvement, so you may encounter some issues when running it. Solutions to these problems can be found below _(continuously updated)_:
+
 - code-runner cyclic invocation errors:
-  - Save `response.json` and check if the format is correct.  
-  - If the format is correct, focus on the key fields. If you find `"finish_reason"` is `"length"`, it means the current `max_tokens` per dialog round is too small (the code currently sets this at 32k; you can adjust it as needed).  
-  - If it's not a length issue, extract the `"code"` content from the `"arguments"`, i.e., the original generated code, and try running it. You can also improve code quality through prompt optimization and other means.  
+  - Save `response.json` and check if the format is correct.
+  - If the format is correct, focus on the key fields. If you find `"finish_reason"` is `"length"`, it means the current `max_tokens` per dialog round is too small (the code currently sets this at 32k; you can adjust it as needed).
+  - If it's not a length issue, extract the `"code"` content from the `"arguments"`, i.e., the original generated code, and try running it. You can also improve code quality through prompt optimization and other means.
 
 ## Evaluation and Optimization
 
-By following the steps above, we can already use Kimi K2.5 to effectively complete industry information collation tasks. In more complex scenarios, you can further optimize Kimi K2.5's performance in the following ways:  
+By following the steps above, we can already use Kimi K2.5 to effectively complete industry information collation tasks. In more complex scenarios, you can further optimize Kimi K2.5's performance in the following ways:
 
 ### Use Suitable Tool Calls
-In addition to Kimi K2.5’s official tools, you can define and execute custom tools as needed. For example, to query US stock indices, you can design and use a corresponding tool as shown in the example below.  
+
+In addition to Kimi K2.5’s official tools, you can define and execute custom tools as needed. For example, to query US stock indices, you can design and use a corresponding tool as shown in the example below.
 
 #### Tool Definition
 
 By describing our tool definitions using JSON Schema, we make it clearer and more intuitive for the Kimi K2.5 large model to understand what parameters our tool needs and the type and description of each parameter.
 
-```python 
+```python
 TOOLS = [
     {
         "type": "function",
@@ -1003,14 +1018,15 @@ TOOLS = [
         }
     }
 ]
-``` 
+```
+
 Here we have created a tool named `get_us_stock_index`, describing to the large model its use case and the required parameter `symbol` (US stock index symbol).
 
 #### Tool Execution
 
 Next, we need to implement the query function by adding the following function to the original code:
 
-```python 
+```python
 def get_us_stock_index(symbol: str) -> str:
     """Call the AKShare API to get US stock index historical market data"""
     try:
@@ -1085,12 +1101,13 @@ def get_us_stock_index(symbol: str) -> str:
 
     except Exception as e:
         return f"Error getting index data: {str(e)}"
+```
 
-``` 
 #### Registering the Tool
 
 Additionally, by supplementing the tool registration at the corresponding location, we enable the model to automatically call our newly defined tool:
-```python 
+
+```python
 for call in message.tool_calls:
             func_name = call.function.name
             args = json.loads(call.function.arguments)
@@ -1116,10 +1133,11 @@ for call in message.tool_calls:
             result = await self.call_tool(uri, func_name, args)
             messages.append({"role": "tool", "tool_call_id": call.id, "content": result})
             
-``` 
-The complete code above has already integrated this tool. After running, you can initiate a conversation to test its functionality:  
+```
 
-```shell 
+The complete code above has already integrated this tool. After running, you can initiate a conversation to test its functionality:
+
+```shell
 Q: Can you give me a summary of how the Nasdaq Index has performed so far in 2025?
 
 [Calling tools: 1 tools]
@@ -1160,7 +1178,7 @@ Q: Can you give me a summary of how the Nasdaq Index has performed so far in 202
 
 After using the tool to query stock index data across the full time range, Kimi K2.5 also automatically invoked the charting tool to plot the selected time-range data as a line chart.
 
-```shell 
+```shell
 
 AI Response：
 ## Summary: Nasdaq Index Performance in 2025
@@ -1196,9 +1214,8 @@ Based on the latest data through November 11, 2025, the **Nasdaq Composite Index
 2025 has been a **banner year** for technology investors, with the Nasdaq delivering exceptional returns driven by the AI revolution and continued digital transformation. The index has shown both strong appreciation and significant volatility, creating opportunities for both long-term investors and active traders.
 
 **[Source: Market Data / Nasdaq Composite Index real-time data through November 11, 2025]**
-``` 
+```
 
-
-![nasdaq_2025_performance](/docs/guide/nasdaq_2025_performance.png)
+![nasdaq\_2025\_performance](/docs/guide/nasdaq_2025_performance.png)
 
 In this way, we can define many commonly used functions as tools, which will significantly enhance the output quality of large language models.

@@ -1,3 +1,7 @@
+---
+title: "Use Official Tools in Kimi API"
+---
+
 import { Tabs } from 'nextra/components'
 
 # How to Use Official Tools in Kimi API
@@ -8,29 +12,28 @@ This section will guide you through how to easily call and execute these officia
 
 ## Official Tools List
 
-| Tool Name                      | Tool Description                             |
-|-----------------------------|--------------------------------------|
-| `convert`   | Unit conversion tool, supporting length, mass, volume, temperature, area, time, energy, pressure, speed, and currency conversions              |
-| `web-search`       | Real-time information and internet search tool. Web search is currently charged, please see [Web Search Price](/docs/pricing/tools.mdx)            |
-| `rethink`          | Intelligent reasoning tool           |
-| `random-choice`    | Random selection tool         |
-| `mew`              | Random cat meowing and blessing tool        |
-| `memory`           | Memory storage and retrieval system tool, supporting persistent storage of conversation history and user preferences    |
-| `excel`            | Excel and CSV file analysis tool     |
-| `date`             | Date and time processing tool        |
-| `base64`           | Base64 encoding and decoding tool                |
-| `fetch`            | URL content extraction Markdown formatting tool           |
-| `quickjs`          | Quick JS engine security execution JavaScript code tool          |
-| `code_runner`      | Python code execution tool          |
+| Tool Name | Tool Description |
+| --- | --- |
+| `convert` | Unit conversion tool, supporting length, mass, volume, temperature, area, time, energy, pressure, speed, and currency conversions |
+| `web-search` | Real-time information and internet search tool. Web search is currently charged, please see [Web Search Price](/docs/pricing/tools.mdx) |
+| `rethink` | Intelligent reasoning tool |
+| `random-choice` | Random selection tool |
+| `mew` | Random cat meowing and blessing tool |
+| `memory` | Memory storage and retrieval system tool, supporting persistent storage of conversation history and user preferences |
+| `excel` | Excel and CSV file analysis tool |
+| `date` | Date and time processing tool |
+| `base64` | Base64 encoding and decoding tool |
+| `fetch` | URL content extraction Markdown formatting tool |
+| `quickjs` | Quick JS engine security execution JavaScript code tool |
+| `code_runner` | Python code execution tool |
 
 ## An Example of Using Official Tools
 
-Here is a Python example, using the web_search official tool as an example, showing how to call official tools through Kimi API:
+Here is a Python example, using the web\_search official tool as an example, showing how to call official tools through Kimi API:
 
 You can also interactively experience the capabilities of Kimi models and tools through Kimi Development Workbench, [go to Development Workbench](/playground)
 
-Here are the Kimi official tools you can use, you can experience them by adding the formula URI to the demo example below:
-`moonshot/convert:latest`, `moonshot/web-search:latest`, `moonshot/rethink:latest`, `moonshot/random-choice:latest`, `moonshot/mew:latest`, `moonshot/memory:latest`, `moonshot/excel:latest`, `moonshot/date:latest`, `moonshot/base64:latest`, `moonshot/fetch:latest`, `moonshot/quickjs:latest`, `moonshot/code_runner:latest`
+Here are the Kimi official tools you can use, you can experience them by adding the formula URI to the demo example below: `moonshot/convert:latest`, `moonshot/web-search:latest`, `moonshot/rethink:latest`, `moonshot/random-choice:latest`, `moonshot/mew:latest`, `moonshot/memory:latest`, `moonshot/excel:latest`, `moonshot/date:latest`, `moonshot/base64:latest`, `moonshot/fetch:latest`, `moonshot/quickjs:latest`, `moonshot/code_runner:latest`
 
 ```python
 # Formula Chat Client - OpenAI chat with official tools
@@ -228,7 +231,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
 ```
 
 ## Official Tools Concept and Usage
@@ -304,7 +306,7 @@ We can simply take the `tools` field (always an array of dicts) and append it to
 
 However, you may need to note that if `type=function`, you need to ensure that `function.name` is unique within an API request, otherwise the chat completion request will be considered invalid and immediately returned with a 401 error.
 
-Additionally, if you are using multiple formulas, you need to maintain a mapping of `function.name` -> `formula_uri` for future reference.
+Additionally, if you are using multiple formulas, you need to maintain a mapping of `function.name` -\> `formula_uri` for future reference.
 
 ##### Handling Model Request Return
 
@@ -395,15 +397,8 @@ Then the model can continue to do further reasoning.
 
 Key Points:
 
-* The model may return more than one tool\_calls, so you must return all tool\_calls for the model to continue, otherwise the request will be considered invalid and rejected.
-
-* If the assistant has tool\_calls, the next messages must be exactly the same role=tool messages as the tool\_calls, and the tool\_call\_id must be aligned with the previous tool\_calls.id.
-
-  * If there are multiple tool\_calls, the order is not sensitive
-
-  * The ids of the tool\_calls output by our model must be unique, and the ids in the role=tool messages must also be aligned.
-
-  * The uniqueness requirement is only local to the tool\_calls - response in this round, not for the entire conversation or globally.
-
-
-
+- The model may return more than one tool\_calls, so you must return all tool\_calls for the model to continue, otherwise the request will be considered invalid and rejected.
+- If the assistant has tool\_calls, the next messages must be exactly the same role=tool messages as the tool\_calls, and the tool\_call\_id must be aligned with the previous tool\_calls.id.
+  - If there are multiple tool\_calls, the order is not sensitive
+  - The ids of the tool\_calls output by our model must be unique, and the ids in the role=tool messages must also be aligned.
+  - The uniqueness requirement is only local to the tool\_calls - response in this round, not for the entire conversation or globally.

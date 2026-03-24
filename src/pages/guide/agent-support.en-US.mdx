@@ -1,5 +1,6 @@
 ---
 hidden: true
+title: "Use kimi-k2 Model in ClaudeCode/Cline/RooCode"
 ---
 
 import { Tabs } from 'nextra/components'
@@ -10,20 +11,18 @@ import { FAQBox } from 'nextra/components'
 
 kimi-k2.5 is a MoE architecture foundation model with exceptional code and Agent capabilities. We use Claude Code, VS Code & Cline/RooCode as examples to illustrate how to use the kimi-k2.5 series models.
 
-**Latest release on January 27, 2026: `kimi-k2.5` model with 256K context window, native fusion of text and visual understanding, and Agent cluster collaboration mode, leading in complex scenarios such as agent tasks, code generation, and visual reasoning.**
-**Latest release on November 6, 2025: `kimi-k2-thinking` and `kimi-k2-thinking-turbo` models with 256k context window, supporting multi-step tool calls and thinking, excelling at solving more complex problems.**
-**Latest release on September 5, 2025: `kimi-k2-0905-preview` model with context window expanded to 256K and enhanced code capabilities. If you need faster response speed, you can use the `kimi-k2-turbo-preview` model, which always aligns with the latest version of kimi-k2 while maintaining consistent functionality, but with output speed increased to 60 tokens/s, up to 100 tokens/s.**
+**Latest release on January 27, 2026: `kimi-k2.5` model with 256K context window, native fusion of text and visual understanding, and Agent cluster collaboration mode, leading in complex scenarios such as agent tasks, code generation, and visual reasoning.** **Latest release on November 6, 2025: `kimi-k2-thinking` and `kimi-k2-thinking-turbo` models with 256k context window, supporting multi-step tool calls and thinking, excelling at solving more complex problems.** **Latest release on September 5, 2025: `kimi-k2-0905-preview` model with context window expanded to 256K and enhanced code capabilities. If you need faster response speed, you can use the `kimi-k2-turbo-preview` model, which always aligns with the latest version of kimi-k2 while maintaining consistent functionality, but with output speed increased to 60 tokens/s, up to 100 tokens/s.**
 
 ## Usage Notes
 
 When using large models for code generation, due to the randomness and complexity of the model, multiple attempts may be required to generate code that meets expectations. Programming tools will automatically perform multiple rounds of retries and calls, which may lead to rapid token usage growth. To better control costs and improve the user experience, we recommend you pay attention to the following points:
-*  **Budget Control**
-    * **Set Daily Spending Limit**: Before use, please go to [Kimi Open Platform Project Settings](https://platform.moonshot.ai/console/projects/settings) to configure the "Project Daily Spending Budget". Once the budget limit is reached, the system will automatically reject all API requests under this project (Note: Due to billing delays, the limit may take about 10 minutes to take effect). For setup instructions, please see [Organization Management Best Practices](/docs/guide/org-best-practice.mdx)
-    * **Balance Alert Reminder**: It is recommended to enable the account balance reminder function. When the account balance falls below the preset amount (default ¥20), the system will notify you via SMS to recharge in a timely manner.
 
-* **Usage Recommendations**
-  * **Continuous Monitoring**: It is recommended to keep monitoring while the programming software is running, and handle abnormal situations promptly to avoid unnecessary resource consumption due to infinite loops or excessive retries.
-  * **Model Selection**: If response speed is not a high priority, you can choose to use the `kimi-k2-0905-preview` or `kimi-k2-0711-preview` models, which consume tokens relatively slowly and are more suitable for long-running scenarios.
+- **Budget Control**
+  - **Set Daily Spending Limit**: Before use, please go to [Kimi Open Platform Project Settings](https://platform.moonshot.ai/console/projects/settings) to configure the "Project Daily Spending Budget". Once the budget limit is reached, the system will automatically reject all API requests under this project (Note: Due to billing delays, the limit may take about 10 minutes to take effect). For setup instructions, please see [Organization Management Best Practices](/docs/guide/org-best-practice.mdx)
+  - **Balance Alert Reminder**: It is recommended to enable the account balance reminder function. When the account balance falls below the preset amount (default ¥20), the system will notify you via SMS to recharge in a timely manner.
+- **Usage Recommendations**
+  - **Continuous Monitoring**: It is recommended to keep monitoring while the programming software is running, and handle abnormal situations promptly to avoid unnecessary resource consumption due to infinite loops or excessive retries.
+  - **Model Selection**: If response speed is not a high priority, you can choose to use the `kimi-k2-0905-preview` or `kimi-k2-0711-preview` models, which consume tokens relatively slowly and are more suitable for long-running scenarios.
 
 ## K2 Vendor Verifier
 
@@ -32,7 +31,8 @@ Kimi models have always focused on agentic loops, and the reliability of tool ca
 **Latest Update**: K2VV has been expanded to 12 vendors, and more test data has been open-sourced. Welcome to provide feedback on the test metrics you care about [here](https://github.com/MoonshotAI/K2-Vendor-Verifier/issues/9).
 
 ## Obtaining API Key
-* Visit the Open Platform at https://platform.moonshot.ai/console/api-keys to create and obtain an API Key, selecting the default project.
+
+- Visit the Open Platform at [https://platform.moonshot.ai/console/api-keys](https://platform.moonshot.ai/console/api-keys) to create and obtain an API Key, selecting the default project.
 
 ![key](/docs/guide/cline/apikey.jpeg)
 
@@ -138,14 +138,12 @@ Enter `/status` in Claude Code to check the model status:
 
 ![status](/docs/guide/cline/status.png)
 
-* How to experience the thinking capabilities of `kimi-k2.5` in Claude Code
-  * After configuring the turbo model, click the `Tab` button to switch after entering the Claude Code page. A "Thinking on" indicator will appear when the switch is successful.
-
+- How to experience the thinking capabilities of `kimi-k2.5` in Claude Code
+  - After configuring the turbo model, click the `Tab` button to switch after entering the Claude Code page. A "Thinking on" indicator will appear when the switch is successful.
 
 ![status](/docs/guide/cline/thinking-on.png)
 
 You can now use Claude Code for development as usual!
-
 
 ## Using kimi k2.5 model in Cline
 
@@ -160,54 +158,47 @@ You can now use Claude Code for development as usual!
 
 ![cline](/docs/guide/cline/search_cline.jpeg)
 
-
 ### Verify Installation
 
 After installation, you can:
+
 1. See the Cline icon in the left activity bar of VS Code
 2. Or search for "Cline" related commands through the command palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) to verify the installation was successful
 
-
 ### Official Recommendation: Configure Moonshot Provider to use kimi-k2.5 model
 
-* Select 'Moonshot' as the API Provider
-* Select 'api.moonshot.ai' as the Moonshot Entrypoint
-* Configure the Moonshot API Key with the Key obtained from the Kimi Open Platform
-* Select 'kimi-k2.5' as the Model
-* Check 'Disable browser tool usage' under Browser
-* Click 'Done' to save the configuration
+- Select 'Moonshot' as the API Provider
+- Select 'api.moonshot.ai' as the Moonshot Entrypoint
+- Configure the Moonshot API Key with the Key obtained from the Kimi Open Platform
+- Select 'kimi-k2.5' as the Model
+- Check 'Disable browser tool usage' under Browser
+- Click 'Done' to save the configuration
 
-![moonshot_cline](/docs/guide/cline/moonshot_cline_en.png)
-
+![moonshot\_cline](/docs/guide/cline/moonshot_cline_en.png)
 
 ### Experience the effects of kimi-k2.5 model in cline
-* We asked the kimi-k2.5 model to write a Snake game
+
+- We asked the kimi-k2.5 model to write a Snake game
 
 <div style={{ maxWidth: '100%', margin: '20px 0' }}>
-  <video 
-    controls 
-    style={{ width: '100%', height: 'auto' }}
-  >
+  <video controls style={{ width: '100%', height: 'auto' }}>
     <source src="/docs/guide/cline/cline-run.mp4" type="video/mp4" />
+
     Your browser does not support video playback.
   </video>
 </div>
 
-
-* Game effects
+- Game effects
 
 <div style={{ maxWidth: '100%', margin: '20px 0' }}>
-  <video 
-    controls 
-    style={{ width: '100%', height: 'auto' }}
-  >
+  <video controls style={{ width: '100%', height: 'auto' }}>
     <source src="/docs/guide/cline/snake.mp4" type="video/mp4" />
+
     Your browser does not support video playback.
   </video>
 </div>
 
 ## Using kimi k2.5 model in RooCode
-
 
 ### Install RooCode
 
@@ -220,26 +211,24 @@ After installation, you can:
 
 ![cline](/docs/guide/cline/search_roocode.png)
 
-
 ### Verify Installation
 
 After installation, you can:
+
 1. See the RooCode icon in the left activity bar of VS Code
 2. Or search for "RooCode" related commands through the command palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) to verify the installation was successful
 
-
 ### Official Recommendation: Configure Moonshot Provider to use kimi-k2.5 model
 
-* Select 'Moonshot' as the API Provider
-* Select 'api.moonshot.ai' as the Moonshot Entrypoint
-* Configure the Moonshot API Key with the Key obtained from the Kimi Open Platform
-* Select 'kimi-k2.5' as the Model
-* Check 'Disable browser tool usage' under Browser
+- Select 'Moonshot' as the API Provider
+- Select 'api.moonshot.ai' as the Moonshot Entrypoint
+- Configure the Moonshot API Key with the Key obtained from the Kimi Open Platform
+- Select 'kimi-k2.5' as the Model
+- Check 'Disable browser tool usage' under Browser
 
 ![roocode](/docs/guide/cline/moonshot_roocode_en.png)
 
 ## Using kimi k2.5 Model in OpenCode
-
 
 ### Install OpenCode
 
@@ -258,10 +247,8 @@ npm install -g opencode-ai
 ### Configure API key
 
 1. Run `opencode auth login` and select **Moonshot AI**.
-
    ```bash
    $ opencode auth login
-
    ┌  Add credential
    │
    ◆  Select provider
@@ -269,12 +256,9 @@ npm install -g opencode-ai
    │  ...
    └
    ```
-
 2. Enter your Moonshot AI API key.
-
    ```bash
    $ opencode auth login
-
    ┌  Add credential
    │
    ◇  Select provider
@@ -284,17 +268,12 @@ npm install -g opencode-ai
    │  _
    └
    ```
-
 3. Run `opencode` to launch OpenCode.
-
    ```bash
    $ opencode
    ```
-
-   Use the `/models` command to select a model like _Kimi K2.5_ or _Kimi K2 Turbo_ .
-   _Kimi K2.5_ is the official kimi-k2-0905-preview model, and _Kimi K2 Turbo_ is the official kimi-k2-turbo-preview model.
-
-   ```
+   Use the `/models` command to select a model like _Kimi K2.5_ or _Kimi K2 Turbo_ . _Kimi K2.5_ is the official kimi-k2-0905-preview model, and _Kimi K2 Turbo_ is the official kimi-k2-turbo-preview model.
+   ```text
    /models
    ```
 
@@ -304,68 +283,67 @@ Let's get started. For more information, please visit [opencode.ai/docs](https:/
 
 ## Direct API Calls to kimi-k2.5 model
 
-
-<Tabs items={['python', 'curl', 'node.js']} >
-  <Tabs.Tab>
-```python showLineNumbers 
-from openai import OpenAI
-
-client = OpenAI(
-    api_key = "$MOONSHOT_API_KEY",
-    base_url = "https://api.moonshot.ai/v1",
-)
-
-completion = client.chat.completions.create(
-    model = "kimi-k2.5",
-    messages = [
-        {"role": "system", "content": "You are Kimi, an artificial intelligence assistant provided by Moonshot AI. You are more proficient in Chinese and English conversations. You will provide users with safe, helpful, and accurate answers. At the same time, you will refuse to answer any questions involving terrorism, racial discrimination, pornography, or violence. Moonshot AI is a proper noun and cannot be translated into other languages."},
-        {"role": "user", "content": "Hello, my name is Li Lei, what is 1+1?"}
-    ]
-)
-
-print(completion.choices[0].message.content)
-```
-  </Tabs.Tab>
-  <Tabs.Tab>
-```bash showLineNumbers 
-curl https://api.moonshot.ai/v1/chat/completions \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer $MOONSHOT_API_KEY" \
-    -d '{
-        "model": "kimi-k2.5",
-        "messages": [
+<Tabs>
+  <Tab>
+    ```python showLineNumbers
+    from openai import OpenAI
+    
+    client = OpenAI(
+        api_key = "$MOONSHOT_API_KEY",
+        base_url = "https://api.moonshot.ai/v1",
+    )
+    
+    completion = client.chat.completions.create(
+        model = "kimi-k2.5",
+        messages = [
             {"role": "system", "content": "You are Kimi, an artificial intelligence assistant provided by Moonshot AI. You are more proficient in Chinese and English conversations. You will provide users with safe, helpful, and accurate answers. At the same time, you will refuse to answer any questions involving terrorism, racial discrimination, pornography, or violence. Moonshot AI is a proper noun and cannot be translated into other languages."},
             {"role": "user", "content": "Hello, my name is Li Lei, what is 1+1?"}
         ]
-   }'
-```
-  </Tabs.Tab>
-  <Tabs.Tab>  
-```js showLineNumbers
-const OpenAI = require("openai");
-
-const client = new OpenAI({
-    apiKey: "$MOONSHOT_API_KEY",    
-    baseURL: "https://api.moonshot.ai/v1",
-});
-
-async function main() {
-    const completion = await client.chat.completions.create({
-        model: "kimi-k2.5",         
-        messages: [ 
-            {"role": "system", "content": "You are Kimi, an artificial intelligence assistant provided by Moonshot AI. You are more proficient in Chinese and English conversations. You will provide users with safe, helpful, and accurate answers. At the same time, you will refuse to answer any questions involving terrorism, racial discrimination, pornography, or violence. Moonshot AI is a proper noun and cannot be translated into other languages."},
-            {"role": "user", "content": "Hello, my name is Li Lei, what is 1+1?"}
-        ]
+    )
+    
+    print(completion.choices[0].message.content)
+    ```
+  </Tab>
+  <Tab>
+    ```bash showLineNumbers
+    curl https://api.moonshot.ai/v1/chat/completions \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $MOONSHOT_API_KEY" \
+        -d '{
+            "model": "kimi-k2.5",
+            "messages": [
+                {"role": "system", "content": "You are Kimi, an artificial intelligence assistant provided by Moonshot AI. You are more proficient in Chinese and English conversations. You will provide users with safe, helpful, and accurate answers. At the same time, you will refuse to answer any questions involving terrorism, racial discrimination, pornography, or violence. Moonshot AI is a proper noun and cannot be translated into other languages."},
+                {"role": "user", "content": "Hello, my name is Li Lei, what is 1+1?"}
+            ]
+       }'
+    ```
+  </Tab>
+  <Tab>
+    ```js showLineNumbers
+    const OpenAI = require("openai");
+    
+    const client = new OpenAI({
+        apiKey: "$MOONSHOT_API_KEY",    
+        baseURL: "https://api.moonshot.ai/v1",
     });
-    console.log(completion.choices[0].message.content);
-}
-
-main();
-```
-  </Tabs.Tab>
+    
+    async function main() {
+        const completion = await client.chat.completions.create({
+            model: "kimi-k2.5",         
+            messages: [ 
+                {"role": "system", "content": "You are Kimi, an artificial intelligence assistant provided by Moonshot AI. You are more proficient in Chinese and English conversations. You will provide users with safe, helpful, and accurate answers. At the same time, you will refuse to answer any questions involving terrorism, racial discrimination, pornography, or violence. Moonshot AI is a proper noun and cannot be translated into other languages."},
+                {"role": "user", "content": "Hello, my name is Li Lei, what is 1+1?"}
+            ]
+        });
+        console.log(completion.choices[0].message.content);
+    }
+    
+    main();
+    ```
+  </Tab>
 </Tabs>
 
-Where $MOONSHOT_API_KEY needs to be replaced with the API Key you created on the platform.                                
+Where \$MOONSHOT\_API\_KEY needs to be replaced with the API Key you created on the platform.
 
 To use the `kimi-k2-turbo-preview` model, simply replace the model name with `kimi-k2-turbo-preview`.
 

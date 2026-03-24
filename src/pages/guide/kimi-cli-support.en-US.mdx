@@ -1,15 +1,17 @@
-# Use Kimi CLI to Call Kimi Model
+---
+title: "Use Kimi CLI to Call Kimi Model"
+---
 
 [Kimi CLI](https://github.com/MoonshotAI/kimi-cli) is a new CLI agent that can help you with your software development tasks and terminal operations.
 
-> **IMPORTANT**
-> Kimi CLI is currently in technical preview.
+> **IMPORTANT** Kimi CLI is currently in technical preview.
 
 ## Key features
 
 - Shell-like UI and raw shell command execution
 - Zsh integration
-- [Agent Client Protocol] support
+- [Agent Client Protocol]
+   support
 - MCP support
 - And more to come...
 
@@ -17,8 +19,7 @@
 
 ## Installation
 
-> **IMPORTANT**
-> Kimi CLI currently only supports macOS and Linux. Windows support is coming soon.
+> **IMPORTANT** Kimi CLI currently only supports macOS and Linux. Windows support is coming soon.
 
 Kimi CLI is published as a Python package on PyPI. We highly recommend installing it with [uv](https://docs.astral.sh/uv/). If you have not installed uv yet, please follow the instructions [here](https://docs.astral.sh/uv/getting-started/installation/) to install it first.
 
@@ -30,8 +31,7 @@ uv tool install --python 3.13 kimi-cli
 
 Run `kimi --help` to check if Kimi CLI is installed successfully.
 
-> **IMPORTANT**
-> Due to the security checks on macOS, the first time you run `kimi` command may take 10 seconds or more depending on your system environment.
+> **IMPORTANT** Due to the security checks on macOS, the first time you run `kimi` command may take 10 seconds or more depending on your system environment.
 
 ## Upgrading
 
@@ -55,8 +55,7 @@ After setup, Kimi CLI will be ready to use. You can send `/help` to get more inf
 
 Kimi CLI is not only a coding agent, but also a shell. You can switch the mode by pressing `Ctrl-X`. In shell mode, you can directly run shell commands without leaving Kimi CLI.
 
-> **NOTE**
-> Built-in shell commands like `cd` are not supported yet.
+> **NOTE** Built-in shell commands like `cd` are not supported yet.
 
 ### Zsh integration
 
@@ -69,8 +68,7 @@ git clone https://github.com/MoonshotAI/zsh-kimi-cli.git \
   ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/kimi-cli
 ```
 
-> **NOTE**
-> If you are using a plugin manager other than Oh My Zsh, you may need to refer to the plugin's README for installation instructions.
+> **NOTE** If you are using a plugin manager other than Oh My Zsh, you may need to refer to the plugin's README for installation instructions.
 
 Then add `kimi-cli` to your Zsh plugin list in `~/.zshrc`:
 
@@ -82,7 +80,9 @@ After restarting Zsh, you can switch to agent mode by pressing `Ctrl-X`.
 
 ### ACP support
 
-Kimi CLI supports [Agent Client Protocol] out of the box. You can use it together with any ACP-compatible editor or IDE.
+Kimi CLI supports [Agent Client Protocol]
+
+ out of the box. You can use it together with any ACP-compatible editor or IDE.
 
 For example, to use Kimi CLI with [Zed](https://zed.dev/), add the following configuration to your `~/.config/zed/settings.json`:
 
@@ -143,7 +143,7 @@ Kimi Agent SDK provides a programmatic interface to interact with the Kimi CLI, 
 Available SDKs:
 
 - **Go** - [go](https://github.com/MoonshotAI/kimi-agent-sdk/tree/main/go)
-- **Node.js** - [node/agent_sdk](https://github.com/MoonshotAI/kimi-agent-sdk/tree/main/node/agent_sdk)
+- **Node.js** - [node/agent\_sdk](https://github.com/MoonshotAI/kimi-agent-sdk/tree/main/node/agent_sdk)
 - **Python** - [python](https://github.com/MoonshotAI/kimi-agent-sdk/tree/main/python)
 
 For detailed information, see [Kimi Agent SDK GitHub repository](https://github.com/MoonshotAI/kimi-agent-sdk).
