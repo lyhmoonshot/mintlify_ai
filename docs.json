@@ -22,44 +22,44 @@
       {
         "tab": "Guides",
         "pages": [
-          "docs/overview.en-US",
-          "docs/introduction.en-US",
+          "docs/overview",
+          "docs/introduction",
           {
             "group": "Getting Started Guide",
             "pages": [
-              "docs/guide/kimi-k2-5-quickstart.en-US",
-              "docs/guide/kimi-k2-quickstart.en-US",
-              "docs/guide/use-kimi-k2-thinking-model.en-US",
-              "docs/guide/start-using-kimi-api.en-US",
-              "docs/guide/use-kimi-in-openclaw.en-US",
-              "docs/guide/migrating-from-openai-to-kimi.en-US",
-              "docs/guide/use-moonpalace.en-US",
-              "docs/guide/engage-in-multi-turn-conversations-using-kimi-api.en-US",
-              "docs/guide/use-kimi-vision-model.en-US",
-              "docs/guide/auto-reconnect.en-US",
-              "docs/guide/utilize-the-streaming-output-feature-of-kimi-api.en-US",
-              "docs/guide/use-kimi-api-to-complete-tool-calls.en-US",
-              "docs/guide/use-web-search.en-US",
-              "docs/guide/use-json-mode-feature-of-kimi-api.en-US",
-              "docs/guide/use-partial-mode-feature-of-kimi-api.en-US",
-              "docs/guide/use-playground-to-debug-the-model.en-US",
-              "docs/guide/use-kimi-api-for-file-based-qa.en-US",
-              "docs/guide/agent-support.en-US",
-              "docs/guide/configure-the-modelscope-mcp-server.en-US",
-              "docs/guide/use-official-tools.en-US",
-              "docs/guide/kimi-cli-support.en-US",
-              "docs/guide/use-kimi-k2-to-setup-agent.en-US",
-              "docs/guide/benchmark-best-practice.en-US",
-              "docs/guide/prompt-best-practice.en-US",
-              "docs/guide/org-best-practice.en-US",
-              "docs/guide/faq.en-US"
+              "docs/guide/kimi-k2-5-quickstart",
+              "docs/guide/kimi-k2-quickstart",
+              "docs/guide/use-kimi-k2-thinking-model",
+              "docs/guide/start-using-kimi-api",
+              "docs/guide/use-kimi-in-openclaw",
+              "docs/guide/migrating-from-openai-to-kimi",
+              "docs/guide/use-moonpalace",
+              "docs/guide/engage-in-multi-turn-conversations-using-kimi-api",
+              "docs/guide/use-kimi-vision-model",
+              "docs/guide/auto-reconnect",
+              "docs/guide/utilize-the-streaming-output-feature-of-kimi-api",
+              "docs/guide/use-kimi-api-to-complete-tool-calls",
+              "docs/guide/use-web-search",
+              "docs/guide/use-json-mode-feature-of-kimi-api",
+              "docs/guide/use-partial-mode-feature-of-kimi-api",
+              "docs/guide/use-playground-to-debug-the-model",
+              "docs/guide/use-kimi-api-for-file-based-qa",
+              "docs/guide/agent-support",
+              "docs/guide/configure-the-modelscope-mcp-server",
+              "docs/guide/use-official-tools",
+              "docs/guide/kimi-cli-support",
+              "docs/guide/use-kimi-k2-to-setup-agent",
+              "docs/guide/benchmark-best-practice",
+              "docs/guide/prompt-best-practice",
+              "docs/guide/org-best-practice",
+              "docs/guide/faq"
             ]
           },
           {
             "group": "Terms and Agreement",
             "pages": [
-              "docs/agreement/modeluse.en-US",
-              "docs/agreement/userprivacy.en-US"
+              "docs/agreement/modeluse",
+              "docs/agreement/userprivacy"
             ]
           }
         ]
@@ -87,10 +87,10 @@
       {
         "tab": "Pricing",
         "pages": [
-          "docs/pricing/chat.en-US",
-          "docs/pricing/tools.en-US",
-          "docs/pricing/limits.en-US",
-          "docs/pricing/faq.en-US"
+          "docs/pricing/chat",
+          "docs/pricing/tools",
+          "docs/pricing/limits",
+          "docs/pricing/faq"
         ]
       },
       {
