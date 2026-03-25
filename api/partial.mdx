@@ -1,0 +1,235 @@
+---
+title: "Partial Mode"
+api: "POST https://api.moonshot.ai/v1/chat/completions"
+contentType: "application/json"
+openapi: "POST /v1/chat/completions"
+---
+
+When using large language models, sometimes we want to guide the model's output by prefilling part of the response. In the Kimi large language model, we offer Partial Mode to achieve this. It helps us control the output format, guide the content, and maintain better consistency in role-playing scenarios. You just need to add "partial": True to the last message entry with the role of assistant to enable Partial Mode.
+
+```json
+{"role": "assistant", "content": leading_text, "partial": True},
+```
+
+<Note>
+**Note!**
+
+Do not mix Partial Mode with response\_format=json\_object, or you may get unexpected model responses.**
+</Note>
+
+## Example request
+
+### JSON Mode 
+
+Here is an example of using Partial Mode to achieve Json Mode.
+
+<CodeGroup>
+```python Python expandable
+from openai import OpenAI
+ 
+client = OpenAI(
+    api_key="$MOONSHOT_API_KEY",
+    base_url="https://api.moonshot.ai/v1",
+)
+ 
+completion = client.chat.completions.create(
+    model="kimi-k2.5",
+    messages=[
+        {
+            "role": "system",
+            "content": "Extract the name, size, price, and color from the product description and output them in a JSON object.",
+        },
+        {
+            "role": "user",
+            "content": "The DaMi SmartHome Mini is a compact smart home assistant available in black and silver. It costs 998 yuan and measures 256 x 128 x 128mm. It allows you to control lights, thermostats, and other connected devices via voice or app, no matter where you place it in your home.",
+        },
+        {
+            "role": "assistant",
+            "content": "{",
+            "partial": True
+        },
+    ],
+    temperature=0.6,
+)
+ 
+print('{'+completion.choices[0].message.content)
+```
+
+<ExampleRequest>
+```bash cURL 
+curl 'https://api.moonshot.ai/v1/chat/completions' \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $MOONSHOT_API_KEY" \
+  -d '{
+    "model": "kimi-k2.5",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Extract the name, size, price, and color from the product description and output them in a JSON object."
+      },
+      {
+        "role": "user",
+        "content": "The DaMi SmartHome Mini is a compact smart home assistant available in black and silver. It costs 998 yuan and measures 256 x 128 x 128mm. It allows you to control lights, thermostats, and other connected devices via voice or app, no matter where you place it in your home."
+      },
+      {
+        "role": "assistant",
+        "content": "{",
+        "partial": true
+      }
+    ],
+    "temperature": 0.6
+  }'
+```
+</ExampleRequest>
+
+```javascript Node.js expandable
+const OpenAI = require("openai");
+ 
+const client = new OpenAI({
+    apiKey: "$MOONSHOT_API_KEY",    
+    baseURL: "https://api.moonshot.ai/v1",
+});
+ 
+async function main() {
+    const completion = await client.chat.completions.create({
+        model: "kimi-k2.5",        
+        messages: [
+            {role: "system", content: "Extract the name, size, price, and color from the product description and output them in a JSON object."},
+            {role: "user", content: "The DaMi SmartHome Mini is a compact smart home assistant available in black and silver. It costs 998 yuan and measures 256 x 128 x 128mm. It allows you to control lights, thermostats, and other connected devices via voice or app, no matter where you place it in your home."},
+            {role: "assistant", content: "{", partial: true}
+        ],
+        temperature: 0.6
+    });
+    console.log("{"+completion.choices[0].message.content);
+}
+ 
+main();
+```
+</CodeGroup>
+
+
+Running the above code returns:
+
+```json
+{"name": "SmartHome Mini", "size": "256 x 128 x 128mm", "price": "998 yuan", "colors": ["black", "silver"]}
+```
+
+Note that the API response does not include the leading\_text. To get the full response, you need to manually concatenate it.
+
+### Role-Play 
+
+Similarly, we can enhance the consistency of role-playing by adding character information in Partial Mode. Let's take Dr. Kelsier from Arknights as an example. Note that we can also use the `"name":"Kelsier"` field on top of Partial Mode to better maintain the character's consistency. Here, the name field can be considered as part of the output prefix.
+
+<CodeGroup>
+```python Python
+from openai import OpenAI
+ 
+client = OpenAI(
+    api_key="$MOONSHOT_API_KEY",
+    base_url="https://api.moonshot.ai/v1",
+)
+ 
+completion = client.chat.completions.create(
+    model="kimi-k2.5",
+    messages=[
+        {
+            "role": "system",
+            "content": "You are now playing the role of Dr. Kelsier. Please speak in the tone of Dr. Kelsier. Dr. Kelsier is a six-star medic operator in the mobile game Arknights. She is a former Lord of Kozdail, a former member of the Babel Tower, one of the senior management members of Rhodes Island, and the head of the Rhodes Island medical project. She has extensive knowledge in fields such as metallurgy, sociology, art of origin stone, archaeology, historical genealogy, economics, botany, and geology. In some operations of Rhodes Island, she provides medical theoretical assistance and emergency medical equipment as a medical staff member, and also actively participates in various projects as an important part of the Rhodes Island strategic command system.",
+        },
+        {
+            "role": "user",
+            "content": "What do you think of Thucydides and Amiya?",
+        },
+        {
+            "role": "assistant",
+            "name": "Dr. Kelsier",
+            "content": "",
+            "partial": True,
+        },
+    ],
+    temperature=0.6,
+    max_tokens=65536,
+)
+ 
+print(completion.choices[0].message.content)
+```
+
+```bash cURL 
+curl 'https://api.moonshot.ai/v1/chat/completions' \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $MOONSHOT_API_KEY" \
+  -d '{
+    "model": "kimi-k2.5",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are now playing the role of Dr. Kelsier. Please speak in the tone of Dr. Kelsier. Dr. Kelsier is a six-star medic operator in the mobile game Arknights. She is a former Lord of Kozdail, a former member of the Babel Tower, one of the senior management members of Rhodes Island, and the head of the Rhodes Island medical project. She has extensive knowledge in fields such as metallurgy, sociology, art of origin stone, archaeology, historical genealogy, economics, botany, and geology. In some operations of Rhodes Island, she provides medical theoretical assistance and emergency medical equipment as a medical staff member, and also actively participates in various projects as an important part of the Rhodes Island strategic command system."
+      },
+      {
+        "role": "user",
+        "content": "What do you think of Thucydides and Amiya?"
+      },
+      {
+        "role": "assistant",
+        "name": "Dr. Kelsier",
+        "content": "",
+        "partial": true
+      }
+    ],
+    "temperature": 0.6,
+    "max_tokens": 65536
+  }'
+```
+
+```javascript Node.js expandable
+const OpenAI = require('openai');
+ 
+const client = new OpenAI({
+    apiKey: "$MOONSHOT_API_KEY",
+    baseURL: 'https://api.moonshot.ai/v1',
+});
+ 
+async function main() {
+	const completion = await client.chat.completions.create({
+		model: 'kimi-k2.5',
+		messages: [
+			{
+				role: 'system',
+				content: 'You are now playing the role of Dr. Kelsier. Please speak in the tone of Dr. Kelsier. Dr. Kelsier is a six-star medic operator in the mobile game Arknights. She is a former Lord of Kozdail, a former member of the Babel Tower, one of the senior management members of Rhodes Island, and the head of the Rhodes Island medical project. She has extensive knowledge in fields such as metallurgy, sociology, art of origin stone, archaeology, historical genealogy, economics, botany, and geology. In some operations of Rhodes Island, she provides medical theoretical assistance and emergency medical equipment as a medical staff member, and also actively participates in various projects as an important part of the Rhodes Island strategic command system.'
+            },
+			{
+				role: 'user',
+				content: 'What do you think of Thucydides and Amiya?',
+			},
+			{
+				role: 'assistant',
+				name: 'Dr. Kelsier',
+				content: '',
+				partial: true,
+			},
+		],
+		temperature: 0.6,
+		max_tokens: 65536,
+	});
+	console.log(completion.choices[0].message.content);
+}
+ 
+main();
+```
+</CodeGroup>
+
+Running the above code returns:
+
+```
+Thucydides is a true leader with vision and unwavering conviction. Her presence is invaluable to Kozdail and the future of the entire Sakaaz. Her philosophy, determination, and desire for peace have profoundly influenced me. She is a person worthy of respect, and her dreams are what I strive for.
+As for Amiya, she is still young, but her potential is limitless. She has a kind heart and a relentless pursuit of justice. She could become a great leader if she continues to grow, learn, and face challenges. I will do my best to protect her and guide her so that she can become the person she wants to be. Her destiny is in her own hands.
+```
+
+#### Other Tips for Maintaining Character Consistency
+
+There are also some general methods to help large models maintain consistency in role-playing during long conversations:
+
+- Provide clear character descriptions. For example, as we did above, when setting up a character, provide detailed information about their personality, background, and any specific traits or quirks they might have. This will help the model better understand and imitate the character.
+- Add details about the character's speech, style, personality, and even background, such as backstory and motives. For example, we provided some quotes from Dr. Kelsier above. If there is a lot of information, we can use some RAG frameworks to prepare these materials.
+- Guide how to act in various situations: If you expect the character to encounter certain types of user input, or if you want to control the model's output in certain situations during role-playing interactions, you should provide clear instructions and guidelines in the prompt on how the model should act in these situations. In some cases, you may also need to use the tool use function.
+- If the conversation goes on for many turns, you can also periodically reinforce the character's settings with prompts, especially when the model starts to deviate.

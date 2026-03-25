@@ -1,0 +1,58 @@
+---
+title: "Check Balance"
+sidebarTitle: "Check Balance"
+description: "REST API to check your available, voucher, and cash balances on Kimi OpenPlatform."
+canonical: https://platform.moonshot.ai/docs/api/balance
+area: "api"
+api: "GET https://api.moonshot.ai/v1/users/me/balance"
+apis:
+  - "/v1/users/me/balance"
+capabilities:
+  - "billing"
+  - "account-balance"
+level: "basic"
+audience:
+  - "developer"
+  - "org-admin"
+related:
+  - "docs/pricing/chat"
+  - "docs/pricing/limits"
+aliases:
+  - "balance api"
+  - "query account balance"
+openapi: "GET /v1/users/me/balance"
+---
+
+## Request
+
+This API endpoint requires authentication via Bearer token in the Authorization header. No request body is required.
+
+<ExampleRequest>
+```bash cURL 
+curl 'https://api.moonshot.ai/v1/users/me/balance' \
+  -H "Authorization: Bearer <$MOONSHOT_API_KEY>"
+```
+</ExampleRequest>
+
+<ResponseExample>
+```json
+{
+  "code": 0,
+  "data": {
+    "available_balance": 49.58894,
+    "voucher_balance": 46.58893,
+    "cash_balance": 3.00001
+  },
+  "scode": "0x0",
+  "status": true
+}
+```
+</ResponseExample>
+
+## Response Content Description
+
+| Field | Description | Type | Unit |
+|---|---|---|---|
+| available_balance | The available balance, including cash balance and voucher balance. When it is less than or equal to 0, the user cannot call the inference API | float | USD |
+| voucher_balance | The voucher balance, which cannot be negative | float | USD |
+| cash_balance | The cash balance, which can be negative, indicating that the user owes money. When it is negative, `available_balance` is equal to the value of `voucher_balance` | float | USD |

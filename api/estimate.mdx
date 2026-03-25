@@ -1,0 +1,72 @@
+---
+title: "Estimate Tokens"
+api: "POST https://api.moonshot.ai/v1/tokenizers/estimate-token-count"
+contentType: "application/json"
+openapi: "POST /v1/tokenizers/estimate-token-count"
+---
+
+## Request Content
+
+The input structure for `estimate-token-count` is almost identical to that of `chat completion`.
+
+## Example
+
+```json
+{
+    "model": "kimi-k2.5",
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are Kimi, an AI assistant provided by Moonshot AI. You excel in Chinese and English conversations. You provide users with safe, helpful, and accurate answers. You refuse to answer any questions involving terrorism, racism, pornography, or violence. Moonshot AI is a proper noun and should not be translated into other languages."
+        },
+        { "role": "user", "content": "Hello, my name is Li Lei. What is 1+1?" }
+    ]
+}
+```
+
+## Parameters
+
+<ParamField path="messages" required type="List[Dict]">
+A list of messages in the conversation so far.
+This is a list of structures, with each element similar to: `json{"role": "user", "content": "Hello"}` The role can only be one of `system`, `user`, `assistant`, and the content must not be empty
+</ParamField>
+
+<ParamField path="model" required type="string">
+Model ID, which can be obtained through List Models.
+
+Currently one of `kimi-k2.5`, `kimi-k2-0905-preview`,`kimi-k2-0711-preview`, `kimi-k2-turbo-preview`,`moonshot-v1-8k`,`moonshot-v1-32k`,`moonshot-v1-128k`, `moonshot-v1-auto`,`moonshot-v1-8k-vision-preview`,`moonshot-v1-32k-vision-preview`,`moonshot-v1-128k-vision-preview`
+</ParamField>
+
+<ExampleRequest>
+```bash cURL 
+curl 'https://api.moonshot.ai/v1/tokenizers/estimate-token-count' \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $MOONSHOT_API_KEY" \
+  -d '{
+    "model": "kimi-k2.5",
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are Kimi, an AI assistant provided by Moonshot AI. You excel in Chinese and English conversations. You provide users with safe, helpful, and accurate answers. You refuse to answer any questions involving terrorism, racism, pornography, or violence. Moonshot AI is a proper noun and should not be translated into other languages."
+        },
+        {
+            "role": "user",
+            "content": "Hello, my name is Li Lei. What is 1+1?"
+        }
+    ]
+}'
+```
+</ExampleRequest>
+
+<ResponseExample>
+```json 
+{
+    "data": {
+        "total_tokens": 80
+    }
+}
+```
+</ResponseExample>
+
+If there is no `error` field, you can take `data.total_tokens` as the calculation result.
+
