@@ -18,7 +18,7 @@ If you are doing benchmark testing with kimi api, please refer to this [benchmar
 You can simply use it by switching the `model` parameter:
 
 <Tabs>
-  <Tab>
+  <Tab title="curl">
     ```bash
     $ curl https://api.moonshot.ai/v1/chat/completions \
         -H "Content-Type: application/json" \
@@ -40,7 +40,7 @@ You can simply use it by switching the `model` parameter:
     
     ```
   </Tab>
-  <Tab>
+  <Tab title="python">
     ```python
     import os
     import openai
@@ -91,7 +91,7 @@ You can simply use it by switching the `model` parameter:
 For the `kimi-k2.5` model, thinking is enabled by default, no need to manually specify it:
 
 <Tabs>
-  <Tab>
+  <Tab title="curl">
     ```bash
     $ curl https://api.moonshot.ai/v1/chat/completions \
         -H "Content-Type: application/json" \
@@ -112,7 +112,7 @@ For the `kimi-k2.5` model, thinking is enabled by default, no need to manually s
     
     ```
   </Tab>
-  <Tab>
+  <Tab title="python">
     ```python
     import os
     import openai

@@ -376,7 +376,7 @@ You can refer to [Use Thinking Models](/docs/guide/use-kimi-k2-thinking-model.md
 For the `kimi-k2.5` model, you can disable thinking by specifying `"thinking": {"type": "disabled"}` in the request body:
 
 <Tabs>
-  <Tab>
+  <Tab title="curl">
     ```bash
     $ curl https://api.moonshot.ai/v1/chat/completions \
         -H "Content-Type: application/json" \
@@ -390,7 +390,7 @@ For the `kimi-k2.5` model, you can disable thinking by specifying `"thinking": {
        }'
     ```
   </Tab>
-  <Tab>
+  <Tab title="python">
     ```python
     import os
     import openai

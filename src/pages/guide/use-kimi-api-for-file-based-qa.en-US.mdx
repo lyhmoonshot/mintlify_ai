@@ -7,7 +7,7 @@ import { Tabs } from 'nextra/components'
 The Kimi intelligent assistant can upload files and answer questions based on those files. The Kimi API offers the same functionality. Below, we'll walk through a practical example of how to upload files and ask questions using the Kimi API:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from pathlib import Path
     from openai import OpenAI
@@ -48,7 +48,7 @@ The Kimi intelligent assistant can upload files and answer questions based on th
     print(completion.choices[0].message)
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require("openai");
     const fs = require("fs")
@@ -108,7 +108,7 @@ Let's review the basic steps and considerations for file-based Q&A:
 If you want to ask questions based on multiple files, it's quite simple. **Just place each file in a separate system prompt.** Here's how you can do it in code:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from typing import *
      
@@ -175,7 +175,7 @@ If you want to ask questions based on multiple files, it's quite simple. **Just 
         main()
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const fs = require('fs');
     const path = require('path');
@@ -260,7 +260,7 @@ In general, the file upload and extraction features are designed to convert file
 Since we have limited the number of files a single user can upload (up to 1000 files per user), we suggest that you regularly clean up the uploaded files after the extraction process is complete. You can periodically run the following code to clean up the uploaded files:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
      
@@ -275,7 +275,7 @@ Since we have limited the number of files a single user can upload (up to 1000 f
     	client.files.delete(file_id=file.id)
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require("openai")
      

@@ -17,7 +17,7 @@ Streaming, in a nutshell, means that whenever the Kimi large language model gene
 You can use streaming output in this way (stream=True) and get the streaming response:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
      
@@ -48,7 +48,7 @@ You can use streaming output in this way (stream=True) and get the streaming res
     		print(delta.content, end="")
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require('openai')
      
@@ -129,7 +129,7 @@ data: [DONE]
 However, in practice, streaming output can be interrupted by uncontrollable factors such as network disconnections or client-side errors. In such cases, the last data chunk may not have been fully transmitted, making it impossible to know the total number of tokens consumed by the request. To avoid this issue, we recommend saving the content of each data chunk as it is received and then using the token calculation interface to compute the total consumption after the request ends, regardless of whether it was successful or not. Here is an example code snippet:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     import os
     import httpx
@@ -180,7 +180,7 @@ However, in practice, streaming output can be interrupted by uncontrollable fact
     print("completion_tokens:", estimate_token_count("".join(completion)))
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const axios = require('axios');
     const OpenAI = require('openai');
@@ -251,7 +251,7 @@ for chunk in stream:
 If you prefer not to use the Python SDK to handle streaming output and instead want to directly interface with HTTP APIs to use the Kimi large language model (for example, in cases where you are using a language without an SDK, or you have unique business logic that the SDK cannot meet), we provide some examples to help you understand how to properly handle the [SSE](https://kimi.moonshot.cn/share/cr7boh3dqn37a5q9tds0) response body in HTTP (we still use Python code as an example here, with detailed explanations provided in comments).
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     import httpx # We use the httpx library to make our HTTP requests
     
@@ -310,7 +310,7 @@ If you prefer not to use the Python SDK to handle streaming output and instead w
     		data = data + "\n" + line # We still add a newline character when appending content, as this data chunk may intentionally format the data in separate lines
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const axios = require('axios'); // Use the axios library to make HTTP requests
     
@@ -393,7 +393,7 @@ During the streaming output process, only the `content` field is streamed, meani
 Sometimes, we want to get multiple results to choose from. To do this, you should set the `n` parameter in the request to a value greater than 1. When it comes to stream output, we also support the use of `n>1`. In such cases, we need to add some extra code to determine the `index` value of the current data block, to figure out which response the data block belongs to. Let's illustrate this with example code:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     import httpx # We use the httpx library to make our HTTP requests
     
@@ -464,7 +464,7 @@ Sometimes, we want to get multiple results to choose from. To do this, you shoul
     	print("message:", json.dumps(message, ensure_ascii=False))
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const axios = require('axios'); // Use the axios library to make HTTP requests
     

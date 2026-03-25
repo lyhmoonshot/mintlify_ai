@@ -7,7 +7,7 @@ import { Tabs } from 'nextra/components'
 The Kimi API allows you to interact with the Kimi large language model. Here is a simple example code:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
      
@@ -28,7 +28,7 @@ The Kimi API allows you to interact with the Kimi large language model. Here is 
     print(completion.choices[0].message.content)
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require("openai")
      
@@ -40,7 +40,7 @@ The Kimi API allows you to interact with the Kimi large language model. Here is 
     async function main(){
         completion = await client.chat.completions.create({
             model: "kimi-k2.5",
-            messages: [
+            messages = [
                 {"role": "system", "content": "You are Kimi, an AI assistant provided by Moonshot AI. You are proficient in Chinese and English conversations. You provide users with safe, helpful, and accurate answers. You will reject any requests involving terrorism, racism, or explicit content. Moonshot AI is a proper noun and should not be translated."},
                 {"role": "user", "content": "Hello, my name is Li Lei. What is 1+1?"}
             ]

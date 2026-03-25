@@ -13,7 +13,7 @@ So, we need to manually keep track of the context for each request. In other wor
 _Note: We have added the key points for implementing multi-turn conversations as comments in the code._
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
     
@@ -61,12 +61,12 @@ _Note: We have added the key points for implementing multi-turn conversations as
     print(chat("Do you know how old I am this year?")) # Here, based on the previous context, the Kimi large language model will know that you are 27 years old
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require("openai")
     
     const client = new OpenAI({
-      apiKey = "MOONSHOT_API_KEY", // Replace MOONSHOT_API_KEY with the API Key you obtained from the Kimi Open Platform
+      apiKey: "MOONSHOT_API_KEY", // Replace MOONSHOT_API_KEY with the API Key you obtained from the Kimi Open Platform
       baseURL: "https://api.moonshot.ai/v1",
     });
     
@@ -126,7 +126,7 @@ It's important to note that in the code above, as the number of `chat` calls inc
 We provide an example below to help you understand how to control the context length. Pay attention to how the `make_messages` function works:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI 
      
@@ -196,7 +196,7 @@ We provide an example below to help you understand how to control the context le
     print(chat("Do you know how old I am this year?")) # Here, based on the previous context, the Kimi large language model will know that you are 27 years old this year.
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require("openai")
     

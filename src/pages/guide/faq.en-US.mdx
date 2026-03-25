@@ -105,7 +105,7 @@ Due to the uncertainty in the generation process of the Kimi large language mode
 The Kimi large language model cannot access highly time-sensitive information such as the current date. However, you can provide this information to the Kimi large language model through the system prompt. For example:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     import os
     from datetime import datetime
@@ -134,7 +134,7 @@ The Kimi large language model cannot access highly time-sensitive information su
     
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require('openai')
      
@@ -170,7 +170,7 @@ The Kimi large language model cannot access highly time-sensitive information su
 In some cases, you might need to directly interface with the Kimi API (instead of using the OpenAI SDK). When interfacing with the Kimi API directly, you need to determine the subsequent processing logic based on the status returned by the API. Typically, we use the HTTP status code 200 to indicate a successful request, while 4xx and 5xx status codes indicate a failed request. We provide error information in JSON format. For specific handling logic based on the request status, please refer to the following code snippets:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     import os
     import httpx
@@ -203,7 +203,7 @@ In some cases, you might need to directly interface with the Kimi API (instead o
         print(f"error: status={r.status_code}, type='{error['error']['type']}', message='{error['error']['message']}'")
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const axios = require('axios');
      

@@ -68,7 +68,7 @@ python -c 'import openai; print("version =",openai.__version__)'
 ### Example Code
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
     
@@ -90,7 +90,7 @@ python -c 'import openai; print("version =",openai.__version__)'
     print(completion.choices[0].message.content)
     ```
   </Tab>
-  <Tab>
+  <Tab title="curl">
     ```bash showLineNumbers
     curl https://api.moonshot.ai/v1/chat/completions \
         -H "Content-Type: application/json" \
@@ -105,7 +105,7 @@ python -c 'import openai; print("version =",openai.__version__)'
        }'
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require("openai");
     
@@ -140,7 +140,7 @@ Hello, Li Lei! 1+1 equals 2. This is a basic addition problem. If you have more 
 ### Streaming Output Example
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
      
@@ -167,7 +167,7 @@ Hello, Li Lei! 1+1 equals 2. This is a basic addition problem. If you have more 
     
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require('openai')
      
@@ -179,7 +179,7 @@ Hello, Li Lei! 1+1 equals 2. This is a basic addition problem. If you have more 
     async function main() {
         const stream = await client.chat.completions.create({
             model: "kimi-k2-turbo-preview",
-            messages: [
+            messages = [
                 {role: "system", content: "You are Kimi, an AI assistant provided by Moonshot AI. You excel at Chinese and English dialog, and provide helpful, safe, and accurate answers. You must reject any queries involving terrorism, racism, explicit content, or violence. 'Moonshot AI' must always remain in English and must not be translated to other languages."},
                 {role: "user", content: "Hello, my name is Li Lei. What is 1+1?"}
             ],

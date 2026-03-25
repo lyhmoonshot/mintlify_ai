@@ -284,7 +284,7 @@ Let's get started. For more information, please visit [opencode.ai/docs](https:/
 ## Direct API Calls to kimi-k2.5 model
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
     
@@ -304,7 +304,7 @@ Let's get started. For more information, please visit [opencode.ai/docs](https:/
     print(completion.choices[0].message.content)
     ```
   </Tab>
-  <Tab>
+  <Tab title="curl">
     ```bash showLineNumbers
     curl https://api.moonshot.ai/v1/chat/completions \
         -H "Content-Type: application/json" \
@@ -318,7 +318,7 @@ Let's get started. For more information, please visit [opencode.ai/docs](https:/
        }'
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require("openai");
     
@@ -329,7 +329,7 @@ Let's get started. For more information, please visit [opencode.ai/docs](https:/
     
     async function main() {
         const completion = await client.chat.completions.create({
-            model: "kimi-k2.5",         
+            model = "kimi-k2.5",         
             messages: [ 
                 {"role": "system", "content": "You are Kimi, an artificial intelligence assistant provided by Moonshot AI. You are more proficient in Chinese and English conversations. You will provide users with safe, helpful, and accurate answers. At the same time, you will refuse to answer any questions involving terrorism, racial discrimination, pornography, or violence. Moonshot AI is a proper noun and cannot be translated into other languages."},
                 {"role": "user", "content": "Hello, my name is Li Lei, what is 1+1?"}

@@ -11,7 +11,7 @@ import { Tabs } from 'nextra/components'
 The Kimi API is compatible with OpenAI's interface specifications. You can use the [Python](https://github.com/openai/openai-python) or [NodeJS](https://github.com/openai/openai-node) SDKs provided by OpenAI to call and use the Kimi large language model. This means that if your application or service is developed based on OpenAI's models, you can seamlessly migrate to using the Kimi large language model by simply replacing the `base_url` and `api_key` with the configuration for the Kimi large language model. Here is an example of how to do this:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
     
@@ -21,7 +21,7 @@ The Kimi API is compatible with OpenAI's interface specifications. You can use t
     )
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require("openai");
      
@@ -75,7 +75,7 @@ Here is an example of migrating from `functions` to `tools`:
 _We will present the code that needs to be modified in the form of comments, along with explanations, to help developers better understand how to perform the migration._
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from typing import *
     
@@ -211,7 +211,7 @@ _We will present the code that needs to be modified in the form of comments, alo
     print(choice.message.content)  # <-- Finally, we return the model's response to the user
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const { OpenAI } = require('openai');
     
@@ -324,7 +324,7 @@ The Kimi API supports the `tool_choice` parameter, but there are some subtle dif
 **Migration suggestion**: If your application or service relies on the `required` value of the `tool_choice` field in the OpenAI API to ensure that the large model "definitely" selects a certain tool for invocation, we suggest using some special methods to enhance the Kimi large language model's awareness of invoking tools to partially accommodate the original business logic. For example, you can emphasize the use of a certain tool in the prompt to achieve a similar effect. We demonstrate this logic with a simplified version of the code:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
     
@@ -367,7 +367,7 @@ The Kimi API supports the `tool_choice` parameter, but there are some subtle dif
         print(choice.message.content)
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require('openai')
     client = OpenAI({

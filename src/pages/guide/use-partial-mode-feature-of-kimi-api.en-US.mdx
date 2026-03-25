@@ -78,7 +78,7 @@ When calling the Kimi API, there might be cases where the estimated number of in
 Let's use a simple example to explain how to implement this:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
      
@@ -111,7 +111,7 @@ Let's use a simple example to explain how to implement this:
         print(completion.choices[0].message.content)  # <-- Here, you will see the Kimi model continue to complete the output content based on what has been output before
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require('openai')
      
@@ -156,7 +156,7 @@ Let's use a simple example to explain how to implement this:
 The `name` field in Partial Mode is a special attribute that enhances the model's understanding of its role, compelling it to output content in the voice of the specified character. To illustrate how the `name` field is used in Partial Mode, let's consider an example of role-playing with the Kimi large language model, using the character Dr. Kelsier from the mobile game Arknights. By setting `"name": "Kelsier"`, we ensure the model maintains character consistency, with the `name` field acting as a prefix for the output, prompting the Kimi large language model to respond as Kelsier:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
     from openai import OpenAI
      
@@ -195,7 +195,7 @@ The `name` field in Partial Mode is a special attribute that enhances the model'
     print(completion.choices[0].message.content)
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require('openai')
      
@@ -250,7 +250,7 @@ There are also some general methods to help large language models maintain chara
 - If the conversation goes on for many rounds, you can also periodically use the system prompt to reinforce the character's settings, especially when the model starts to deviate. For example:
 
 <Tabs>
-  <Tab>
+  <Tab title="python">
     ```python showLineNumbers
      from openai import OpenAI
      
@@ -301,7 +301,7 @@ There are also some general methods to help large language models maintain chara
      print(completion.choices[0].message.content)
     ```
   </Tab>
-  <Tab>
+  <Tab title="node.js">
     ```js showLineNumbers
     const OpenAI = require('openai')
      
