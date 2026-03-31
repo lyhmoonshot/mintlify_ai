@@ -1,0 +1,1065 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Moonshot AI API",
+		"version": "1.0.0",
+		"description": "Moonshot AI / Kimi 大语言模型服务 API"
+	},
+	"servers": [
+		{
+			"url": "https://api.moonshot.cn",
+			"description": "生产环境"
+		}
+	],
+	"components": {
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"description": "Authorization 请求头需要一个 Bearer 令牌。使用 MOONSHOT_API_KEY 作为令牌。这是一个服务端密钥，请在 [API 密钥页面](https://platform.kimi.com/settings/api-keys) 生成。"
+			}
+		},
+		"schemas": {
+			"Message": {
+				"type": "object",
+				"properties": {
+					"role": {
+						"type": "string",
+						"enum": ["system", "user", "assistant"],
+						"description": "消息发送者的角色"
+					},
+					"content": {
+						"type": "string",
+						"description": "消息内容"
+					},
+					"name": {
+						"type": "string",
+						"description": "消息发送者的名称（可选）"
+					},
+					"partial": {
+						"type": "boolean",
+						"description": "在最后一条 assistant 消息中设置为 true 以启用 Partial Mode"
+					}
+				},
+				"required": ["role", "content"]
+			},
+			"ToolDefinition": {
+				"type": "object",
+				"properties": {
+					"type": {
+						"type": "string",
+						"enum": ["function"]
+					},
+					"function": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string",
+								"description": "函数名称。必须符合正则表达式：^[a-zA-Z_][a-zA-Z0-9-_]{0,63}$",
+								"pattern": "^[a-zA-Z_][a-zA-Z0-9-_]{0,63}$"
+							},
+							"description": {
+								"type": "string",
+								"description": "函数功能描述"
+							},
+							"parameters": {
+								"type": "object",
+								"description": "函数参数，JSON Schema 格式",
+								"additionalProperties": true
+							}
+						},
+						"required": ["name", "parameters"]
+					}
+				},
+				"required": ["type", "function"]
+			},
+			"ChatRequestBase": {
+				"type": "object",
+				"properties": {
+					"messages": {
+						"type": "array",
+						"description": "当前对话中的消息列表",
+						"items": {
+							"$ref": "#/components/schemas/Message"
+						}
+					},
+					"max_tokens": {
+						"type": "integer",
+						"description": "已弃用，请使用 max_completion_tokens"
+					},
+					"max_completion_tokens": {
+						"type": "integer",
+						"description": "聊天补全生成的最大 Token 数量。如果结果达到最大 Token 数而未结束，finish reason 将为 \"length\"；否则为 \"stop\"。这是您期望返回的 Token 长度，而非输入加输出的总长度。"
+					},
+					"response_format": {
+						"type": "object",
+						"description": "设置为 {\"type\": \"json_object\"} 可启用 JSON 模式，确保生成的内容为有效 JSON。设置后，需在 prompt 中明确引导模型输出 JSON 格式并指定具体格式，否则可能产生意外结果。默认值为 {\"type\": \"text\"}。",
+						"properties": {
+							"type": {
+								"type": "string",
+								"enum": ["text", "json_object"]
+							}
+						}
+					},
+					"stop": {
+						"oneOf": [
+							{ "type": "string" },
+							{
+								"type": "array",
+								"items": { "type": "string" },
+								"maxItems": 5
+							}
+						],
+						"description": "停用词，完全匹配时将停止输出。匹配到的词本身不会被输出。最多允许 5 个字符串，每个不超过 32 字节"
+					},
+					"stream": {
+						"type": "boolean",
+						"description": "是否以流式方式返回响应"
+					},
+					"stream_options": {
+						"type": "object",
+						"description": "流式响应选项",
+						"properties": {
+							"include_usage": {
+								"type": "boolean",
+								"description": "如果设置，将在 data: [DONE] 消息之前额外发送一个 chunk。该 chunk 的 usage 字段显示整个请求的 Token 使用统计，choices 字段为空数组。其他所有 chunk 也会包含 usage 字段，但值为 null。注意：如果流中断，可能无法收到包含总 Token 用量的最终 chunk"
+							}
+						}
+					},
+					"tools": {
+						"type": "array",
+						"description": "模型可调用的工具列表",
+						"items": {
+							"$ref": "#/components/schemas/ToolDefinition"
+						},
+						"maxItems": 128
+					},
+					"prompt_cache_key": {
+						"type": "string",
+						"description": "用于缓存相似请求的响应以优化缓存命中率。对于 Coding Agent，通常是代表单个会话的 session id 或 task id；退出并恢复会话时应保持不变。对于 Kimi Code Plan，此字段为必填以提高缓存命中率。对于其他多轮对话 Agent，也建议使用此字段"
+					},
+					"safety_identifier": {
+						"type": "string",
+						"description": "用于检测可能违反使用政策的用户的稳定标识符。应为唯一标识每个用户的字符串。建议对用户名或邮箱进行哈希处理以避免发送可识别信息"
+					}
+				},
+				"required": ["messages"]
+			},
+			"MoonshotV1ChatRequest": {
+				"title": "moonshot-v1",
+				"allOf": [
+					{ "$ref": "#/components/schemas/ChatRequestBase" },
+					{
+						"type": "object",
+						"properties": {
+							"model": {
+								"type": "string",
+								"description": "模型 ID",
+								"enum": [
+									"moonshot-v1-8k",
+									"moonshot-v1-32k",
+									"moonshot-v1-128k",
+									"moonshot-v1-auto",
+									"moonshot-v1-8k-vision-preview",
+									"moonshot-v1-32k-vision-preview",
+									"moonshot-v1-128k-vision-preview"
+								],
+								"default": "moonshot-v1-128k"
+							},
+							"temperature": {
+								"type": "number",
+								"format": "float",
+								"description": "采样温度，范围 0 到 1。较高的值（如 0.7）使输出更随机，较低的值（如 0.2）使输出更集中和确定。默认值为 0.0。",
+								"default": 0.0,
+								"minimum": 0,
+								"maximum": 1
+							},
+							"top_p": {
+								"type": "number",
+								"format": "float",
+								"description": "另一种采样方法，模型考虑累积概率质量为 top_p 的 Token 结果。例如 0.1 表示仅考虑概率质量前 10% 的 Token。通常建议只修改此参数或 temperature 其中之一。默认值为 1.0。",
+								"default": 1.0,
+								"minimum": 0,
+								"maximum": 1
+							},
+							"n": {
+								"type": "integer",
+								"description": "每条输入消息生成的结果数量。默认为 1，不超过 5。当温度非常接近 0 时，只能返回 1 个结果。",
+								"default": 1,
+								"minimum": 1,
+								"maximum": 5
+							},
+							"presence_penalty": {
+								"type": "number",
+								"format": "float",
+								"description": "存在惩罚，范围 -2.0 到 2.0。正值会根据 Token 是否出现在文本中进行惩罚，增加模型讨论新话题的可能性",
+								"default": 0,
+								"minimum": -2,
+								"maximum": 2
+							},
+							"frequency_penalty": {
+								"type": "number",
+								"format": "float",
+								"description": "频率惩罚，范围 -2.0 到 2.0。正值会根据 Token 在文本中的现有频率进行惩罚，降低模型逐字重复相同短语的可能性",
+								"default": 0,
+								"minimum": -2,
+								"maximum": 2
+							}
+						},
+						"required": ["model"]
+					}
+				]
+			},
+			"KimiK2ChatRequest": {
+				"title": "kimi-k2",
+				"allOf": [
+					{ "$ref": "#/components/schemas/ChatRequestBase" },
+					{
+						"type": "object",
+						"properties": {
+							"model": {
+								"type": "string",
+								"description": "模型 ID",
+								"enum": [
+									"kimi-k2-0905-preview",
+									"kimi-k2-0711-preview",
+									"kimi-k2-turbo-preview"
+								],
+								"default": "kimi-k2-0905-preview"
+							},
+							"temperature": {
+								"type": "number",
+								"format": "float",
+								"description": "采样温度，范围 0 到 1。较高的值（如 0.7）使输出更随机，较低的值（如 0.2）使输出更集中和确定。默认值为 0.6。",
+								"default": 0.6,
+								"minimum": 0,
+								"maximum": 1
+							},
+							"top_p": {
+								"type": "number",
+								"format": "float",
+								"description": "另一种采样方法，模型考虑累积概率质量为 top_p 的 Token 结果。例如 0.1 表示仅考虑概率质量前 10% 的 Token。通常建议只修改此参数或 temperature 其中之一。默认值为 1.0。",
+								"default": 1.0,
+								"minimum": 0,
+								"maximum": 1
+							},
+							"n": {
+								"type": "integer",
+								"description": "每条输入消息生成的结果数量。默认为 1，不超过 5。当温度非常接近 0 时，只能返回 1 个结果。",
+								"default": 1,
+								"minimum": 1,
+								"maximum": 5
+							},
+							"presence_penalty": {
+								"type": "number",
+								"format": "float",
+								"description": "存在惩罚，范围 -2.0 到 2.0。正值会根据 Token 是否出现在文本中进行惩罚，增加模型讨论新话题的可能性",
+								"default": 0,
+								"minimum": -2,
+								"maximum": 2
+							},
+							"frequency_penalty": {
+								"type": "number",
+								"format": "float",
+								"description": "频率惩罚，范围 -2.0 到 2.0。正值会根据 Token 在文本中的现有频率进行惩罚，降低模型逐字重复相同短语的可能性",
+								"default": 0,
+								"minimum": -2,
+								"maximum": 2
+							}
+						},
+						"required": ["model"]
+					}
+				]
+			},
+			"KimiK2ThinkingChatRequest": {
+				"title": "kimi-k2-thinking",
+				"allOf": [
+					{ "$ref": "#/components/schemas/ChatRequestBase" },
+					{
+						"type": "object",
+						"properties": {
+							"model": {
+								"type": "string",
+								"description": "模型 ID",
+								"enum": [
+									"kimi-k2-thinking",
+									"kimi-k2-thinking-turbo"
+								],
+								"default": "kimi-k2-thinking"
+							},
+							"temperature": {
+								"type": "number",
+								"format": "float",
+								"description": "采样温度，范围 0 到 1。较高的值（如 0.7）使输出更随机，较低的值（如 0.2）使输出更集中和确定。默认值为 1.0。",
+								"default": 1.0,
+								"minimum": 0,
+								"maximum": 1
+							},
+							"top_p": {
+								"type": "number",
+								"format": "float",
+								"description": "另一种采样方法，模型考虑累积概率质量为 top_p 的 Token 结果。例如 0.1 表示仅考虑概率质量前 10% 的 Token。通常建议只修改此参数或 temperature 其中之一。默认值为 1.0。",
+								"default": 1.0,
+								"minimum": 0,
+								"maximum": 1
+							},
+							"n": {
+								"type": "integer",
+								"description": "每条输入消息生成的结果数量。默认为 1，不超过 5。当温度非常接近 0 时，只能返回 1 个结果。",
+								"default": 1,
+								"minimum": 1,
+								"maximum": 5
+							},
+							"presence_penalty": {
+								"type": "number",
+								"format": "float",
+								"description": "存在惩罚，范围 -2.0 到 2.0。正值会根据 Token 是否出现在文本中进行惩罚，增加模型讨论新话题的可能性",
+								"default": 0,
+								"minimum": -2,
+								"maximum": 2
+							},
+							"frequency_penalty": {
+								"type": "number",
+								"format": "float",
+								"description": "频率惩罚，范围 -2.0 到 2.0。正值会根据 Token 在文本中的现有频率进行惩罚，降低模型逐字重复相同短语的可能性",
+								"default": 0,
+								"minimum": -2,
+								"maximum": 2
+							}
+						},
+						"required": ["model"]
+					}
+				]
+			},
+			"KimiK25ChatRequest": {
+				"title": "kimi-k2.5",
+				"allOf": [
+					{ "$ref": "#/components/schemas/ChatRequestBase" },
+					{
+						"type": "object",
+						"properties": {
+							"model": {
+								"type": "string",
+								"description": "模型 ID",
+								"enum": ["kimi-k2.5"],
+								"default": "kimi-k2.5"
+							},
+							"thinking": {
+								"type": "object",
+								"description": "控制 kimi-k2.5 模型是否启用思考能力。仅当模型为 kimi-k2.5 时可用。可选参数，默认值为 {\"type\": \"enabled\"}。",
+								"properties": {
+									"type": {
+										"type": "string",
+										"enum": ["enabled", "disabled"],
+										"description": "启用或禁用思考能力"
+									}
+								},
+								"required": ["type"],
+								"additionalProperties": false
+							}
+						},
+						"required": ["model"]
+					}
+				]
+			},
+			"ChatCompletionResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "补全结果的唯一标识符"
+					},
+					"object": {
+						"type": "string",
+						"description": "对象类型",
+						"example": "chat.completion"
+					},
+					"created": {
+						"type": "integer",
+						"description": "补全创建时的 Unix 时间戳"
+					},
+					"model": {
+						"type": "string",
+						"description": "用于补全的模型"
+					},
+					"choices": {
+						"type": "array",
+						"description": "补全选项列表",
+						"items": {
+							"type": "object",
+							"properties": {
+								"index": {
+									"type": "integer"
+								},
+								"message": {
+									"type": "object",
+									"properties": {
+										"role": {
+											"type": "string",
+											"enum": ["assistant"]
+										},
+										"content": {
+											"type": ["string", "null"],
+											"description": "助手的消息内容"
+										},
+										"tool_calls": {
+											"type": "array",
+											"description": "模型发起的工具调用",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": { "type": "string" },
+													"type": {
+														"type": "string",
+														"enum": ["function"]
+													},
+													"function": {
+														"type": "object",
+														"properties": {
+															"name": { "type": "string" },
+															"arguments": {
+																"type": "string",
+																"description": "函数参数的 JSON 字符串"
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								},
+								"finish_reason": {
+									"type": "string",
+									"enum": ["stop", "length", "tool_calls"]
+								}
+							}
+						}
+					},
+					"usage": {
+						"type": "object",
+						"properties": {
+							"prompt_tokens": {
+								"type": "integer",
+								"description": "提示中的 Token 数量"
+							},
+							"completion_tokens": {
+								"type": "integer",
+								"description": "补全中的 Token 数量"
+							},
+							"total_tokens": {
+								"type": "integer",
+								"description": "使用的总 Token 数量"
+							}
+						}
+					}
+				}
+			},
+			"BalanceResponse": {
+				"type": "object",
+				"properties": {
+					"code": {
+						"type": "integer",
+						"description": "响应码。0 表示成功。"
+					},
+					"data": {
+						"type": "object",
+						"properties": {
+							"available_balance": {
+								"type": "number",
+								"format": "float",
+								"description": "可用余额，包含现金余额和代金券余额。当小于等于 0 时，用户无法调用推理 API",
+								"example": 49.58894
+							},
+							"voucher_balance": {
+								"type": "number",
+								"format": "float",
+								"description": "代金券余额，不可为负",
+								"example": 46.58893
+							},
+							"cash_balance": {
+								"type": "number",
+								"format": "float",
+								"description": "现金余额，可为负值表示欠费。当为负值时，available_balance 等于 voucher_balance 的值",
+								"example": 3.00001
+							}
+						},
+						"required": ["available_balance", "voucher_balance", "cash_balance"]
+					},
+					"scode": {
+						"type": "string",
+						"description": "状态码",
+						"example": "0x0"
+					},
+					"status": {
+						"type": "boolean",
+						"description": "请求状态",
+						"example": true
+					}
+				},
+				"required": ["code", "data", "scode", "status"]
+			},
+			"EstimateTokenRequest": {
+				"type": "object",
+				"properties": {
+					"model": {
+						"type": "string",
+						"description": "模型 ID",
+						"default": "kimi-k2.5",
+						"enum": [
+							"kimi-k2.5",
+							"kimi-k2-0905-preview",
+							"kimi-k2-0711-preview",
+							"kimi-k2-turbo-preview",
+							"kimi-k2-thinking",
+							"kimi-k2-thinking-turbo",
+							"moonshot-v1-8k",
+							"moonshot-v1-32k",
+							"moonshot-v1-128k",
+							"moonshot-v1-auto",
+							"moonshot-v1-8k-vision-preview",
+							"moonshot-v1-32k-vision-preview",
+							"moonshot-v1-128k-vision-preview"
+						]
+					},
+					"messages": {
+						"type": "array",
+						"description": "当前对话中的消息列表",
+						"items": {
+							"$ref": "#/components/schemas/Message"
+						}
+					}
+				},
+				"required": ["model", "messages"]
+			},
+			"EstimateTokenResponse": {
+				"type": "object",
+				"properties": {
+					"data": {
+						"type": "object",
+						"properties": {
+							"total_tokens": {
+								"type": "integer",
+								"description": "估算的总 Token 数量",
+								"example": 80
+							}
+						},
+						"required": ["total_tokens"]
+					}
+				},
+				"required": ["data"]
+			},
+			"FileObject": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "文件唯一标识符"
+					},
+					"object": {
+						"type": "string",
+						"description": "对象类型",
+						"example": "file"
+					},
+					"bytes": {
+						"type": "integer",
+						"description": "文件大小（字节）"
+					},
+					"created_at": {
+						"type": "integer",
+						"description": "文件创建时的 Unix 时间戳"
+					},
+					"filename": {
+						"type": "string",
+						"description": "原始文件名"
+					},
+					"purpose": {
+						"type": "string",
+						"description": "上传文件时指定的用途",
+						"enum": ["file-extract", "image", "video"]
+					},
+					"status": {
+						"type": "string",
+						"description": "文件处理状态",
+						"example": "ok"
+					},
+					"status_details": {
+						"type": "string",
+						"description": "处理失败或返回警告时的额外状态详情"
+					}
+				},
+				"required": ["id", "object", "bytes", "created_at", "filename", "purpose", "status"]
+			},
+			"FileListResponse": {
+				"type": "object",
+				"properties": {
+					"object": {
+						"type": "string",
+						"example": "list"
+					},
+					"data": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/FileObject"
+						}
+					}
+				},
+				"required": ["object", "data"]
+			},
+			"FileDeleteResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "已删除文件的标识符"
+					},
+					"object": {
+						"type": "string",
+						"example": "file"
+					},
+					"deleted": {
+						"type": "boolean",
+						"description": "文件是否删除成功"
+					}
+				},
+				"required": ["id", "object", "deleted"]
+			},
+			"ErrorResponse": {
+				"type": "object",
+				"properties": {
+					"error": {
+						"type": "object",
+						"properties": {
+							"message": {
+								"type": "string",
+								"description": "描述错误原因的错误消息"
+							},
+							"type": {
+								"type": "string",
+								"description": "错误类型"
+							},
+							"code": {
+								"type": "string",
+								"description": "错误码"
+							}
+						},
+						"required": ["message"]
+					}
+				},
+				"required": ["error"]
+			}
+		}
+	},
+	"paths": {
+		"/v1/users/me/balance": {
+			"get": {
+				"summary": "查询余额",
+				"description": "查询您在 Kimi 开放平台上的可用余额、代金券余额和现金余额。",
+				"tags": ["Billing"],
+				"security": [{ "bearerAuth": [] }],
+				"responses": {
+					"200": {
+						"description": "余额信息",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/BalanceResponse" }
+							}
+						}
+					},
+					"401": {
+						"description": "未授权 - API 密钥无效或缺失",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"500": {
+						"description": "服务器错误",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/files": {
+			"post": {
+				"summary": "上传文件",
+				"description": "上传文件用于内容提取、图片理解或视频理解。",
+				"tags": ["Files"],
+				"security": [{ "bearerAuth": [] }],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary",
+										"description": "要上传的文件"
+									},
+									"purpose": {
+										"type": "string",
+										"enum": ["file-extract", "image", "video"],
+										"description": "指定上传文件的处理方式"
+									}
+								},
+								"required": ["file", "purpose"]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "已上传文件的元数据",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/FileObject" }
+							}
+						}
+					},
+					"400": {
+						"description": "请求错误 - 上传参数无效",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"401": {
+						"description": "未授权 - API 密钥无效或缺失",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"500": {
+						"description": "服务器错误",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"summary": "文件列表",
+				"description": "列出当前用户上传的所有文件。",
+				"tags": ["Files"],
+				"security": [{ "bearerAuth": [] }],
+				"responses": {
+					"200": {
+						"description": "已上传文件列表",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/FileListResponse" }
+							}
+						}
+					},
+					"401": {
+						"description": "未授权 - API 密钥无效或缺失",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"500": {
+						"description": "服务器错误",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/files/{file_id}": {
+			"get": {
+				"summary": "获取文件信息",
+				"description": "获取指定已上传文件的元数据。",
+				"tags": ["Files"],
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"name": "file_id",
+						"in": "path",
+						"required": true,
+						"description": "文件标识符",
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "文件元数据",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/FileObject" }
+							}
+						}
+					},
+					"401": {
+						"description": "未授权 - API 密钥无效或缺失",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"404": {
+						"description": "文件未找到",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"500": {
+						"description": "服务器错误",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"summary": "删除文件",
+				"description": "删除一个已上传的文件。",
+				"tags": ["Files"],
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"name": "file_id",
+						"in": "path",
+						"required": true,
+						"description": "文件标识符",
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "删除结果",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/FileDeleteResponse" }
+							}
+						}
+					},
+					"401": {
+						"description": "未授权 - API 密钥无效或缺失",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"404": {
+						"description": "文件未找到",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"500": {
+						"description": "服务器错误",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/files/{file_id}/content": {
+			"get": {
+				"summary": "获取文件内容",
+				"description": "获取以 `file-extract` 用途上传的文件的提取文本内容。",
+				"tags": ["Files"],
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"name": "file_id",
+						"in": "path",
+						"required": true,
+						"description": "文件标识符",
+						"schema": { "type": "string" }
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "提取的文件内容",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string",
+									"description": "提取的文件内容（纯文本）"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "未授权 - API 密钥无效或缺失",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"404": {
+						"description": "文件未找到",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"500": {
+						"description": "服务器错误",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/chat/completions": {
+			"post": {
+				"summary": "创建聊天补全",
+				"description": "为聊天消息创建补全结果。支持标准聊天、Partial Mode 和 Tool Use（函数调用）。",
+				"tags": ["Chat"],
+				"security": [{ "bearerAuth": [] }],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"oneOf": [
+									{ "$ref": "#/components/schemas/KimiK25ChatRequest" },
+									{ "$ref": "#/components/schemas/KimiK2ChatRequest" },
+									{ "$ref": "#/components/schemas/KimiK2ThinkingChatRequest" },
+									{ "$ref": "#/components/schemas/MoonshotV1ChatRequest" }
+								],
+								"discriminator": {
+									"propertyName": "model",
+									"mapping": {
+										"kimi-k2.5": "#/components/schemas/KimiK25ChatRequest",
+										"kimi-k2-0905-preview": "#/components/schemas/KimiK2ChatRequest",
+										"kimi-k2-0711-preview": "#/components/schemas/KimiK2ChatRequest",
+										"kimi-k2-turbo-preview": "#/components/schemas/KimiK2ChatRequest",
+										"kimi-k2-thinking": "#/components/schemas/KimiK2ThinkingChatRequest",
+										"kimi-k2-thinking-turbo": "#/components/schemas/KimiK2ThinkingChatRequest",
+										"moonshot-v1-8k": "#/components/schemas/MoonshotV1ChatRequest",
+										"moonshot-v1-32k": "#/components/schemas/MoonshotV1ChatRequest",
+										"moonshot-v1-128k": "#/components/schemas/MoonshotV1ChatRequest",
+										"moonshot-v1-auto": "#/components/schemas/MoonshotV1ChatRequest",
+										"moonshot-v1-8k-vision-preview": "#/components/schemas/MoonshotV1ChatRequest",
+										"moonshot-v1-32k-vision-preview": "#/components/schemas/MoonshotV1ChatRequest",
+										"moonshot-v1-128k-vision-preview": "#/components/schemas/MoonshotV1ChatRequest"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "聊天补全响应",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ChatCompletionResponse" }
+							}
+						}
+					},
+					"400": {
+						"description": "请求错误 - 参数无效",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"401": {
+						"description": "未授权 - API 密钥无效或缺失",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"500": {
+						"description": "服务器错误",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/tokenizers/estimate-token-count": {
+			"post": {
+				"summary": "估算 Token 数量",
+				"description": "估算给定消息和模型所需的 Token 数量。输入结构与聊天补全几乎相同。",
+				"tags": ["Utilities"],
+				"security": [{ "bearerAuth": [] }],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": { "$ref": "#/components/schemas/EstimateTokenRequest" }
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Token 数量估算结果",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/EstimateTokenResponse" }
+							}
+						}
+					},
+					"400": {
+						"description": "请求错误 - 参数无效",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"401": {
+						"description": "未授权 - API 密钥无效或缺失",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					},
+					"500": {
+						"description": "服务器错误",
+						"content": {
+							"application/json": {
+								"schema": { "$ref": "#/components/schemas/ErrorResponse" }
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"webhooks": {}
+}

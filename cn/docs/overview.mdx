@@ -1,0 +1,122 @@
+---
+title: "欢迎使用 Kimi API 文档"
+sidebarTitle: "欢迎"
+---
+
+<div className="overview-page not-prose" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+  {/* Hero Card */}
+  <div className="overview-hero-card" style={{ position: 'relative', overflow: 'hidden', borderRadius: '16px', border: '1px solid rgba(200, 200, 200, 0.4)' }}>
+    <video
+      autoPlay loop muted playsInline
+      src="/assets/moonshot-ai/k2-video.mp4"
+      style={{ width: '100%', height: '100%', display: 'block', margin: 0, padding: 0, aspectRatio: '813/295', objectFit: 'cover', verticalAlign: 'bottom' }}
+    />
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', background: 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.3), transparent)', padding: '24px' }}>
+      <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ color: 'white', fontSize: '24px', fontWeight: 600 }}>Kimi K2.5 模型</div>
+          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', marginTop: '4px', maxWidth: '600px' }}>
+            Kimi K2.5 是 Kimi 迄今最智能的模型，同时支持视觉与文本输入、思考与非思考模式、对话与 Agent 任务，支持256K上下文长度
+          </div>
+        </div>
+        <a
+          href="/console/api-keys"
+          className="overview-hero-card__cta"
+        >
+          申请 API Key →
+        </a>
+      </div>
+    </div>
+    <a
+      href="/docs/pricing/chat#多模态模型-kimi-k2.5"
+      style={{ position: 'absolute', inset: 0, zIndex: 5, textDecoration: 'none', border: 'none' }}
+      aria-label="Kimi K2.5: 新一代多模态模型"
+    />
+  </div>
+
+  {/* 快速开始 */}
+  <div>
+    <h2 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '16px' }}>快速开始</h2>
+    <div className="overview-grid-2">
+      {[
+        { title: "Kimi K2.5 快速开始", desc: "接入 Kimi K2.5 多模态模型", icon: "bolt", href: "/docs/guide/kimi-k2-5-quickstart" },
+        { title: "控制台", desc: "管理 API Key、查看用量和账单", icon: "chart-line", href: "/console" },
+        { title: "Kimi K2 快速开始", desc: "快速了解和接入 Kimi K2 模型", icon: "handshake", href: "/docs/guide/kimi-k2-quickstart" },
+        { title: "价格与计费", desc: "了解各个模型的价格与计费方式", icon: "wallet", href: "/docs/pricing/chat" },
+        { title: "使用 Thinking 模型", desc: "了解如何使用 Kimi 模型的思考能力", icon: "clock", href: "/docs/guide/use-kimi-k2-thinking-model" },
+        { title: "常见问题", desc: "查看常见问题解答", icon: "circle-question", href: "/docs/guide/faq" },
+      ].map((item, idx) => (
+        <div key={idx} className="overview-link-card">
+          <div className="overview-link-card__body">
+            <div className="overview-link-card__icon">
+              <Icon icon={item.icon} size={20} />
+            </div>
+            <div className="overview-link-card__content">
+              <div className="overview-link-card__title">{item.title}</div>
+              <div className="overview-link-card__description">{item.desc}</div>
+            </div>
+          </div>
+          <a className="overview-overlay-link" href={item.href} aria-label={item.title} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* 模型及定价 */}
+  <div>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 600, margin: 0 }}>模型及定价</h2>
+      <a href="/docs/pricing/chat" className="overview-section-link" style={{ fontSize: '14px' }}>查看全部</a>
+    </div>
+    <div className="overview-grid-3">
+      {[
+        { name: "kimi-k2.5", img: "/assets/moonshot-ai/report5.png", tag: "多模态理解", href: "/docs/pricing/chat#多模态模型-kimi-k2.5" },
+        { name: "kimi-k2-turbo-preview", img: "/assets/moonshot-ai/report2.png", tag: "preview", href: "/docs/pricing/chat#生成模型-kimi-k2" },
+        { name: "kimi-k2-thinking", img: "/assets/moonshot-ai/k2-0905.png", tag: "long think", href: "/docs/pricing/chat#生成模型-kimi-k2" },
+      ].map((model, idx) => (
+        <div key={idx} className="overview-model-card">
+          <div className="overview-model-card__media" style={{ position: 'relative' }}>
+            <img className="overview-model-card__image" src={model.img} alt={model.name} />
+            <div className="overview-model-card__overlay" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end' }}>
+              <div className="overview-model-card__content">
+                <div className="overview-model-card__name">{model.name}</div>
+                <div className="overview-model-card__tag-row">
+                  <span style={{ border: '1px solid rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.9)', padding: '2px 8px', borderRadius: '9999px', fontSize: '12px', background: 'rgba(0,0,0,0.2)' }}>
+                    {model.tag}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a className="overview-overlay-link" href={model.href} aria-label={model.name} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* 更多资源 */}
+  <div>
+    <h2 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '16px' }}>更多资源</h2>
+    <div className="overview-grid-4">
+      {[
+        { title: "K2 模型详解", desc: "查看 K2 模型报告，了解 K2 模型的特性与优势", icon: "brain", href: "https://moonshotai.github.io/Kimi-K2/" },
+        { title: "开发工作台", desc: "通过界面交互式体验 Kimi 模型的能力", icon: "terminal", href: "/playground" },
+        { title: "联网搜索工具", desc: "使用 Kimi 官方联网搜索工具", icon: "magnifying-glass", href: "/docs/guide/use-web-search" },
+        { title: "最佳实践", desc: "提示词编写与应用案例", icon: "file-lines", href: "/docs/guide/prompt-best-practice" },
+      ].map((item, idx) => (
+        <div key={idx} className="overview-resource-card">
+          <div className="overview-resource-card__body">
+            <div className="overview-link-card__icon">
+              <Icon icon={item.icon} size={20} />
+            </div>
+            <div className="overview-link-card__content">
+              <div className="overview-resource-card__title">{item.title}</div>
+              <div className="overview-resource-card__description">{item.desc}</div>
+            </div>
+          </div>
+          <a className="overview-overlay-link" href={item.href} aria-label={item.title} />
+        </div>
+      ))}
+    </div>
+  </div>
+</div>

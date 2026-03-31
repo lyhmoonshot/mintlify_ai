@@ -1,0 +1,225 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Kimi 开放平台",
+  "colors": {
+    "primary": "#111111",
+    "light": "#2A2A2A",
+    "dark": "#111111"
+  },
+  "favicon": "/assets/pics/favicon.ico",
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
+  "api": {
+    "openapi": "openapi.json",
+    "examples": {
+      "defaults": "required"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "快速开始",
+        "groups": [
+          {
+            "group": "概述",
+            "pages": [
+              "docs/overview",
+              "docs/introduction"
+            ]
+          },
+          {
+            "group": "快速上手",
+            "pages": [
+              "docs/guide/start-using-kimi-api",
+              "docs/guide/kimi-k2-5-quickstart",
+              "docs/guide/kimi-k2-quickstart"
+            ]
+          },
+          {
+            "group": "下一步",
+            "pages": [
+              "docs/guide/use-kimi-k2-thinking-model",
+              "docs/guide/engage-in-multi-turn-conversations-using-kimi-api",
+              "docs/guide/use-kimi-vision-model",
+              "docs/guide/use-web-search"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "入门指南",
+        "groups": [
+          {
+            "group": "核心工作流",
+            "pages": [
+              "docs/guide/utilize-the-streaming-output-feature-of-kimi-api",
+              "docs/guide/use-json-mode-feature-of-kimi-api",
+              "docs/guide/use-partial-mode-feature-of-kimi-api",
+              "docs/guide/auto-reconnect",
+              "docs/guide/use-kimi-api-for-file-based-qa"
+            ]
+          },
+          {
+            "group": "工具调用",
+            "pages": [
+              "docs/guide/use-kimi-api-to-complete-tool-calls",
+              "docs/guide/use-official-tools",
+              "docs/guide/configure-the-modelscope-mcp-server"
+            ]
+          },
+          {
+            "group": "调试与运维",
+            "pages": [
+              "docs/guide/use-moonpalace",
+              "docs/guide/use-playground-to-debug-the-model",
+              "docs/guide/org-best-practice"
+            ]
+          },
+          {
+            "group": "集成",
+            "pages": [
+              "docs/guide/use-kimi-in-openclaw",
+              "docs/guide/agent-support",
+              "docs/guide/kimi-cli-support",
+              "docs/guide/use-kimi-k2-to-setup-agent",
+              "docs/guide/migrating-from-openai-to-kimi"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API 接口说明",
+        "groups": [
+          {
+            "group": "API",
+            "pages": [
+              "docs/api/chat",
+              "docs/api/tool-use",
+              "docs/api/partial",
+              "docs/api/estimate",
+              "docs/api/balance"
+            ]
+          },
+          {
+            "group": "文件接口",
+            "pages": [
+              "docs/api/files",
+              "docs/api/files-upload",
+              "docs/api/files-list",
+              "docs/api/files-retrieve",
+              "docs/api/files-delete",
+              "docs/api/files-content"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "产品定价",
+        "groups": [
+          {
+            "group": "模型推理定价",
+            "pages": [
+              "docs/pricing/chat",
+              "docs/pricing/chat-k25",
+              "docs/pricing/chat-k2",
+              "docs/pricing/chat-v1"
+            ]
+          },
+          {
+            "group": "其他",
+            "pages": [
+              "docs/pricing/tools",
+              "docs/pricing/limits"
+            ]
+          },
+          {
+            "group": "支持",
+            "pages": [
+              "docs/pricing/faq"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "资源",
+        "groups": [
+          {
+            "group": "学习与支持",
+            "pages": [
+              "docs/guide/prompt-best-practice",
+              "docs/guide/benchmark-best-practice",
+              "docs/guide/faq"
+            ]
+          },
+          {
+            "group": "条款与协议",
+            "pages": [
+              "docs/agreement/modeluse",
+              "docs/agreement/userprivacy",
+              "docs/agreement/userservice",
+              "docs/agreement/payment"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/assets/logo/light.svg",
+    "dark": "/assets/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "联系销售",
+        "href": "https://platform.kimi.com/contact-sales"
+      },
+      {
+        "label": "博客",
+        "href": "https://platform.kimi.com/blog"
+      },
+      {
+        "label": "开发工作台",
+        "href": "https://platform.kimi.com/playground"
+      },
+      {
+        "label": "用户中心",
+        "href": "https://platform.kimi.com/console/account"
+      }
+    ]
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      {
+        "title": "Open in Kimi",
+        "description": "Ask questions about this page",
+        "icon": "/assets/logo/kimi-context.svg",
+        "href": {
+          "base": "https://kimi.moonshot.cn/",
+          "query": [
+            {
+              "key": "prefill_prompt",
+              "value": "阅读 https://platform.kimi.com$path 的内容，以便我对其进行提问。"
+            }
+          ]
+        }
+      },
+      "mcp",
+      "cursor"
+    ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/MoonshotAI",
+      "github": "https://github.com/MoonshotAI"
+    }
+  },
+  "banner": {
+    "content": "Kimi K2.5 多模态模型现已发布！支持多模态理解与处理。",
+    "dismissible": true
+  }
+}

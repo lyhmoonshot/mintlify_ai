@@ -1,0 +1,521 @@
+---
+title: "Chat Completions"
+sidebarTitle: "Chat"
+openapi: "POST /v1/chat/completions"
+---
+
+# Chat Completions API
+
+## 公开的服务地址
+
+```
+https://api.moonshot.cn
+```
+
+Moonshot 提供基于 HTTP 的 API 服务接入，并且对大部分 API，我们兼容了 OpenAI SDK。
+
+## 快速开始
+
+### 单轮对话
+
+OpenAI 官方 SDK 支持 [Python](https://github.com/openai/openai-python) 和 [Node.js](https://github.com/openai/openai-node) 两种语言，使用 OpenAI SDK 和 Curl 与 API 进行交互的代码如下：
+
+<CodeGroup>
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key = "$MOONSHOT_API_KEY",
+    base_url = "https://api.moonshot.cn/v1",
+)
+
+completion = client.chat.completions.create(
+    model = "kimi-k2.5",
+    messages = [
+        {"role": "system", "content": "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。"},
+        {"role": "user", "content": "你好，我叫李雷，1+1等于多少？"}
+    ]
+)
+
+print(completion.choices[0].message.content)
+```
+
+```bash cURL
+curl https://api.moonshot.cn/v1/chat/completions \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $MOONSHOT_API_KEY" \
+    -d '{
+        "model": "kimi-k2.5",
+        "messages": [
+            {"role": "system", "content": "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。"},
+            {"role": "user", "content": "你好，我叫李雷，1+1等于多少？"}
+        ]
+   }'
+```
+
+```javascript Node.js
+const OpenAI = require("openai");
+
+const client = new OpenAI({
+    apiKey: "$MOONSHOT_API_KEY",
+    baseURL: "https://api.moonshot.cn/v1",
+});
+
+async function main() {
+    const completion = await client.chat.completions.create({
+        model: "kimi-k2.5",
+        messages: [
+            {role: "system", content: "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。"},
+            {role: "user", content: "你好，我叫李雷，1+1等于多少？"}
+        ]
+    });
+    console.log(completion.choices[0].message.content);
+}
+
+main();
+```
+</CodeGroup>
+
+其中 `$MOONSHOT_API_KEY` 需要替换为您在平台上创建的 API Key。
+
+使用 OpenAI SDK 时运行文档中的代码时，需要保证 Python 版本至少为 3.7.1，Node.js 版本至少为 18，OpenAI SDK 版本不低于 1.0.0。
+
+```bash
+pip install --upgrade 'openai>=1.0'
+```
+
+<Note>
+我们可以这样简单检验下自己库的版本：
+
+```bash
+python -c 'import openai; print("version =",openai.__version__)'
+# 输出可能是 version = 1.10.0，表示当前 python 实际使用了 openai 的 v1.10.0 的库
+```
+</Note>
+
+## 多轮对话
+
+上面的单轮对话的例子中语言模型将用户信息列表作为输入，并将模型生成的信息作为输出返回。
+有时我们也可以将模型输出的结果继续作为输入的一部分以实现多轮对话，下面是一组简单的实现多轮对话的例子：
+
+<CodeGroup>
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key = "$MOONSHOT_API_KEY",
+    base_url = "https://api.moonshot.cn/v1",
+)
+
+history = [
+    {"role": "system", "content": "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。"}
+]
+
+def chat(query, history):
+    history.append({
+        "role": "user",
+        "content": query
+    })
+    completion = client.chat.completions.create(
+        model="kimi-k2.5",
+        messages=history
+    )
+    result = completion.choices[0].message.content
+    history.append({
+        "role": "assistant",
+        "content": result
+    })
+    return result
+
+print(chat("地球的自转周期是多少？", history))
+print(chat("月球呢？", history))
+```
+
+```javascript Node.js
+const OpenAI = require("openai");
+
+const client = new OpenAI({
+    apiKey: "$MOONSHOT_API_KEY",
+    baseURL: "https://api.moonshot.cn/v1",
+});
+
+history = [{"role": "system", "content": "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。"}]
+
+async function chat(prompt) {
+    history.push({
+        role: "user", content: prompt
+    })
+    const completion = await client.chat.completions.create({
+        model: "kimi-k2.5",
+        messages: history,
+    });
+    history = history.concat(completion.choices[0].message)
+    return completion.choices[0].message.content;
+}
+
+async function main() {
+    reply = await chat("地球的自转周期是多少？")
+    console.log(reply);
+    reply = await chat("月球呢？")
+    console.log(reply);
+}
+
+main();
+```
+</CodeGroup>
+
+<Note>
+值得注意的是，随着对话的进行，模型每次需要传入的 token 都会线性增加，必要时，需要一些策略进行优化，例如只保留最近几轮对话。
+</Note>
+
+## 请求
+
+### 请求地址
+
+```
+POST https://api.moonshot.cn/v1/chat/completions
+```
+
+### 请求内容
+
+#### 示例
+
+```json
+{
+    "model": "kimi-k2.5",
+    "messages": [
+        {
+            "role": "system",
+            "content": "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。"
+        },
+        { "role": "user", "content": "你好，我叫李雷，1+1等于多少？" }
+    ]
+}
+```
+
+#### 请求参数
+
+<ParamField path="messages" required type="List[Dict]">
+包含迄今为止对话的消息列表。
+
+这是一个结构体的列表，每个元素类似如下：`{"role": "user", "content": "你好"}` role 只支持 `system`,`user`,`assistant` 其一，content 不得为空。content字段可以是string，也可以是 List[Dict]，详见 [content字段说明](#content字段说明)
+</ParamField>
+
+<ParamField path="model" required type="string">
+Model ID，可以通过 List Models 获取。
+
+目前是 `kimi-k2.5`、`kimi-k2-0905-preview`、`kimi-k2-0711-preview`、`kimi-k2-turbo-preview`、`kimi-k2-thinking-turbo`、`kimi-k2-thinking`、`moonshot-v1-8k`、`moonshot-v1-32k`、`moonshot-v1-128k`、`moonshot-v1-auto`、`moonshot-v1-8k-vision-preview`、`moonshot-v1-32k-vision-preview`、`moonshot-v1-128k-vision-preview` 其一。
+</ParamField>
+
+<ParamField path="max_completion_tokens" type="integer" optional>
+聊天完成时生成的最大 token 数。如果到生成了最大 token 数个结果仍然没有结束，finish reason 会是 "length"，否则会是 "stop"。
+
+这个值建议按需给个合理的值，如果不给的话，我们会给一个不错的整数比如 1024。**特别要注意的是**，这个 `max_completion_tokens` 是指您期待我们**返回**的 token 长度，而不是输入 + 输出的总长度。比如对一个 `moonshot-v1-8k` 模型，它的最大输入 + 输出总长度是 8192，当输入 messages 总长度为 4096 的时候，您最多只能设置为 4096，否则我们服务会返回不合法的输入参数（invalid_request_error），并拒绝回答。如果您希望获得"输入的精确 token 数"，可以使用[计算 Token API](/api/estimate)使用我们的计算器获得计数。
+</ParamField>
+
+<ParamField path="temperature" type="float" optional>
+使用什么采样温度，介于 0 和 1 之间。较高的值（如 0.7）将使输出更加随机，而较低的值（如 0.2）将使其更加集中和确定性。
+
+`moonshot-v1` 系列模型默认为 0.0，`kimi-k2` 系列模型默认为 0.6，`kimi-k2-thinking` 系列模型默认为 1.0。`kimi-k2.5` 模型不能修改该参数（开启思考时固定为 1.0，关闭思考时固定为 0.6）。
+</ParamField>
+
+<ParamField path="top_p" type="float" optional>
+另一种采样方法，即模型考虑概率质量为 top_p 的标记的结果。因此，0.1 意味着只考虑概率质量最高的 10% 的标记。一般情况下，我们建议改变这一点或温度，但不建议同时改变。
+
+`moonshot-v1` 系列和 `kimi-k2` 模型默认为 1.0，`kimi-k2.5` 默认值为 0.95。**对于 `kimi-k2.5` 模型，只允许 0.95，且该参数不可修改。** 如果您为 `kimi-k2.5` 设置了不同的值，您将收到错误：`"invalid top_p: only 0.95 is allowed for this model"`。
+</ParamField>
+
+<ParamField path="n" type="integer" optional>
+为每条输入消息生成多少个结果。
+
+`moonshot-v1` 系列和 `kimi-k2` 默认为 1，不得大于 5。特别的，当 temperature 非常小靠近 0 的时候，我们只能返回 1 个结果，如果这个时候 n 已经设置并且 > 1，我们的服务会返回不合法的输入参数（invalid_request_error）。`kimi-k2.5` 模型默认值为 1 且不可修改。
+</ParamField>
+
+<ParamField path="presence_penalty" type="float" optional>
+存在惩罚，介于 -2.0 到 2.0 之间的数字。正值会根据新生成的词汇是否出现在文本中来进行惩罚，增加模型讨论新话题的可能性。
+
+默认为 0。`kimi-k2.5` 模型不能修改该参数。
+</ParamField>
+
+<ParamField path="frequency_penalty" type="float" optional>
+频率惩罚，介于 -2.0 到 2.0 之间的数字。正值会根据新生成的词汇在文本中现有的频率来进行惩罚，减少模型一字不差重复同样话语的可能性。
+
+默认为 0。`kimi-k2.5` 模型不能修改该参数。
+</ParamField>
+
+<ParamField path="response_format" type="object" optional>
+设置为 `{"type": "json_object"}` 可启用 JSON 模式，从而保证模型生成的信息是有效的 JSON。当你将 response_format 设置为 `{"type": "json_object"}` 时，**你需要在 prompt 中明确地引导模型输出 JSON 格式的内容，并告知模型该 JSON 的具体格式，否则将可能导致不符合预期的结果**。
+
+默认为 `{"type": "text"}`。
+</ParamField>
+
+<ParamField path="stop" type="string | List[String]" optional>
+停止词，当全匹配这个（组）词后会停止输出，这个（组）词本身不会输出。最多不能超过 5 个字符串，每个字符串不得超过 32 字节。
+
+默认 null。
+</ParamField>
+
+<ParamField path="thinking" type="object" optional>
+仅对 `kimi-k2.5` 有效。该参数控制模型是否启用思考。
+
+默认值为 `{"type": "enabled"}`。只能为 `{"type": "enabled"}` 或 `{"type": "disabled"}`。
+
+**注意：** 使用 OpenAI SDK 时，您需要使用 `extra_body` 参数来传递此自定义字段。请参阅下方[配置 thinking 参数](#配置-thinking-参数)了解示例。
+</ParamField>
+
+<ParamField path="stream" type="boolean" optional>
+是否流式返回。
+
+默认 false，可选 true。
+</ParamField>
+
+<ParamField path="stream_options.include_usage" type="boolean" optional>
+如果设置，将在 `data: [DONE]` 消息之前额外流式返回一个 chunk。该 chunk 的 usage 字段显示整个请求的 token 使用统计，choices 字段始终为空数组。所有其他 chunk 也会包含 usage 字段，但值为 null。注意：如果流被中断，您可能无法收到包含请求总 token 使用量的最终 usage chunk。
+
+默认 false。
+</ParamField>
+
+<ParamField path="prompt_cache_key" type="string" optional>
+用于缓存相似请求的响应，以优化缓存命中率。
+
+默认 null。对于 Coding Agent，通常使用 session id 或 task id，代表一次会话，如果中途退出后 resume，该值也应保持不变。对于 Kimi Code Plan，为了提高缓存命中率，此字段为必填。对于其他涉及多轮对话的 Agent，也建议实现此字段。
+</ParamField>
+
+<ParamField path="safety_identifier" type="string" optional>
+一个稳定的标识符，用于帮助检测可能违反使用政策的应用用户。该 ID 应是唯一标识每个用户的字符串，建议对用户名或电子邮件地址进行哈希处理，以避免发送任何可识别身份的信息。
+
+默认 null。
+</ParamField>
+
+### content字段说明
+
+`content` 字段可以多种类型的取值，包括：
+
+- **普通文本**：最简单的情况，普通的 `string`
+- **List[Dict]**：有复杂的内容时，每个 Dict 可以有如下字段：
+    * `type`，必需。标识元素类型，应为 `text`、`image_url` 或 `video_url` 中的一种
+    * `text`，对应上面 `type` 为 `text` 的情况，其值应为纯文本
+    * `image_url`，对应上面 `type` 为 `image_url` 的情况，其值应为一个 Dict，表示图片内容，比如 `{"url": "data:image/png;base64,abc123xxxxx=="}`
+    * `video_url`，对应上面 `type` 为 `video_url` 的情况，其值应为一个 Dict，表示视频内容，比如 `{"url": "data:video/mp4;base64,def456yyyyy=="}`
+
+以下几种都是合法的 content 字段：
+- `"你好"`
+- `[{"type": "text", "text": "你好"}]`
+- `[{"type": "image_url", "image_url": {"url": "data:image/png;base64,abc123xxxxx=="}}]`
+- `[{"type": "video_url", "video_url": {"url": "data:video/mp4;base64,def456yyyyy=="}}]`
+- `[{"type": "text", "text": "这是什么？"}, {"type": "image_url", "image_url": {"url": "data:image/png;base64,abc123xxxxx=="}}]`
+
+<Note>
+`image_url` 和 `video_url` 的 `url` 字段支持 base64 格式和 `ms://<file_id>` 格式。详见[使用 Kimi 视觉模型](/docs/guide/use-kimi-vision-model)。
+</Note>
+
+## 配置 thinking 参数
+
+对于 `kimi-k2.5` 模型，思考功能**默认开启**。当您希望开启思考时，无需显式指定。
+
+### 开启思考（默认行为）
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ.get("MOONSHOT_API_KEY"),
+    base_url="https://api.moonshot.cn/v1",
+)
+
+# 思考功能默认开启，无需指定
+completion = client.chat.completions.create(
+    model="kimi-k2.5",
+    messages=[
+        {"role": "user", "content": "解释为什么 1+1=2。"}
+    ],
+    max_tokens=1024*32,
+    stream=True,
+)
+```
+
+### 关闭思考
+
+由于 OpenAI SDK 没有原生的 `thinking` 参数，您需要使用 `extra_body` 参数来传递自定义请求体字段：
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key=os.environ.get("MOONSHOT_API_KEY"),
+    base_url="https://api.moonshot.cn/v1",
+)
+
+# 使用 extra_body 关闭思考
+completion = client.chat.completions.create(
+    model="kimi-k2.5",
+    messages=[
+        {"role": "user", "content": "你好"}
+    ],
+    extra_body={
+        "thinking": {"type": "disabled"}
+    },
+    max_tokens=1024*32,
+)
+```
+
+### 使用 curl
+
+```bash
+curl https://api.moonshot.cn/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $MOONSHOT_API_KEY" \
+  -d '{
+    "model": "kimi-k2.5",
+    "messages": [
+      {"role": "user", "content": "你好"}
+    ],
+    "thinking": {"type": "disabled"}
+  }'
+```
+
+## 返回内容
+
+### 非流式返回
+
+对非流式返回，返回格式类似如下：
+
+```json
+{
+    "id": "cmpl-04ea926191a14749b7f2c7a48a68abc6",
+    "object": "chat.completion",
+    "created": 1698999496,
+    "model": "kimi-k2.5",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": " 你好，李雷！1+1等于2。如果你有其他问题，请随时提问！"
+            },
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 19,
+        "completion_tokens": 21,
+        "total_tokens": 40,
+        "cached_tokens": 10
+    }
+}
+```
+
+### 流式返回
+
+对流式返回，返回格式类似如下：
+
+```json
+data: {"id":"cmpl-1305b94c570f447fbde3180560736287","object":"chat.completion.chunk","created":1698999575,"model":"kimi-k2.5","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}
+
+data: {"id":"cmpl-1305b94c570f447fbde3180560736287","object":"chat.completion.chunk","created":1698999575,"model":"kimi-k2.5","choices":[{"index":0,"delta":{"content":"你好"},"finish_reason":null}]}
+
+...
+
+data: {"id":"cmpl-1305b94c570f447fbde3180560736287","object":"chat.completion.chunk","created":1698999575,"model":"kimi-k2.5","choices":[{"index":0,"delta":{"content":"。"},"finish_reason":null}]}
+
+data: {"id":"cmpl-1305b94c570f447fbde3180560736287","object":"chat.completion.chunk","created":1698999575,"model":"kimi-k2.5","choices":[{"index":0,"delta":{},"finish_reason":"stop","usage":{"prompt_tokens":19,"completion_tokens":13,"total_tokens":32}}]}
+
+data: [DONE]
+```
+
+### 流式调用示例
+
+<CodeGroup>
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key = "$MOONSHOT_API_KEY",
+    base_url = "https://api.moonshot.cn/v1",
+)
+
+response = client.chat.completions.create(
+    model="kimi-k2.5",
+    messages=[
+        {
+            "role": "system",
+            "content": "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。",
+        },
+        {"role": "user", "content": "你好，我叫李雷，1+1等于多少？"},
+    ],
+    stream=True,
+)
+
+collected_messages = []
+for idx, chunk in enumerate(response):
+    chunk_message = chunk.choices[0].delta
+    if not chunk_message.content:
+        continue
+    collected_messages.append(chunk_message)
+    print(f"#{idx}: {''.join([m.content for m in collected_messages])}")
+print(f"Full conversation received: {''.join([m.content for m in collected_messages])}")
+```
+
+```bash cURL
+curl https://api.moonshot.cn/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $MOONSHOT_API_KEY" \
+  -d '{
+    "model": "kimi-k2.5",
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。"
+      },
+      {
+        "role": "user",
+        "content": "你好，我叫李雷，1+1等于多少？"
+      }
+    ],
+    "stream": true
+  }'
+```
+
+```javascript Node.js
+const OpenAI = require("openai");
+
+const client = new OpenAI({
+    apiKey: "$MOONSHOT_API_KEY",
+    baseURL: "https://api.moonshot.cn/v1",
+});
+
+async function main() {
+    const stream = await client.chat.completions.create({
+        model: "kimi-k2.5",
+        messages: [
+            {
+                role: "system",
+                content: "你是 Kimi，由 Moonshot AI 提供的人工智能助手，你更擅长中文和英文的对话。你会为用户提供安全，有帮助，准确的回答。同时，你会拒绝一切涉及恐怖主义，种族歧视，黄色暴力等问题的回答。Moonshot AI 为专有名词，不可翻译成其他语言。"
+            },
+            {
+                role: "user",
+                content: "你好，我叫李雷，1+1等于多少？"
+            }
+        ],
+        stream: true,
+    });
+
+    for await (const chunk of stream) {
+        const delta = chunk.choices[0].delta;
+        if (delta.content) {
+            process.stdout.write(delta.content);
+        }
+    }
+}
+
+main();
+```
+</CodeGroup>
+
+## 相关资源
+
+- [工具调用 API](/api/tool-use) - 了解如何使用 Function Calling
+- [Partial Mode API](/api/partial) - 了解如何使用 Partial Mode 引导输出
+- [计算 Token API](/api/estimate) - 在请求前估算 Token 用量
+- [使用 Kimi 视觉模型](/docs/guide/use-kimi-vision-model) - 了解如何使用视觉能力
+- [使用思考模型](/docs/guide/use-kimi-k2-thinking-model) - 了解如何使用思考模型进行复杂推理

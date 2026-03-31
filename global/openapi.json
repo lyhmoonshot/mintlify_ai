@@ -16,7 +16,7 @@
 			"bearerAuth": {
 				"type": "http",
 				"scheme": "bearer",
-				"description": "The Authorization header expects a Bearer token. Use an MOONSHOT_API_KEY as the token. This is a server-side secret key. Generate one on the [API keys page](https://platform.moonshot.ai/settings/api-keys) in your dashboard."
+				"description": "The Authorization header expects a Bearer token. Use an MOONSHOT_API_KEY as the token. This is a server-side secret key. Generate one on the [API keys page](https://platform.kimi.ai/settings/api-keys) in your dashboard."
 			}
 		},
 		"schemas": {

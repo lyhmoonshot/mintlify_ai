@@ -117,27 +117,29 @@
       },
       {
         "tab": "Pricing",
-        "pages": [
-          {
-            "group": "Pricing",
-            "hidden": true,
-            "pages": [
-              "docs/pricing/chat"
-            ]
-          },
+        "groups": [
           {
             "group": "Chat Pricing",
-            "expanded": true,
             "pages": [
-              "docs/pricing/concepts",
-              "docs/pricing/kimi-k2.5",
-              "docs/pricing/kimi-k2",
-              "docs/pricing/moonshot-v1"
+              "docs/pricing/chat",
+              "docs/pricing/chat-k25",
+              "docs/pricing/chat-k2",
+              "docs/pricing/chat-v1"
             ]
           },
-          "docs/pricing/tools",
-          "docs/pricing/limits",
-          "docs/pricing/faq"
+          {
+            "group": "Other",
+            "pages": [
+              "docs/pricing/tools",
+              "docs/pricing/limits"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "docs/pricing/faq"
+            ]
+          }
         ]
       },
       {
@@ -153,10 +155,7 @@
           },
           {
             "group": "Legal",
-            "pages": [
-              "docs/agreement/modeluse",
-              "docs/agreement/userprivacy"
-            ]
+            "pages": ["docs/agreement/modeluse", "docs/agreement/userprivacy"]
           }
         ]
       }
@@ -170,19 +169,19 @@
     "links": [
       {
         "label": "Contact Sales",
-        "href": "https://platform.moonshot.ai/contact-sales"
+        "href": "https://platform.kimi.ai/contact-sales"
       },
       {
         "label": "Blog",
-        "href": "https://platform.moonshot.ai/blog"
+        "href": "https://platform.kimi.ai/blog"
       },
       {
         "label": "Playground",
-        "href": "https://platform.moonshot.ai/playground"
+        "href": "https://platform.kimi.ai/playground"
       },
       {
         "label": "User Center",
-        "href": "https://platform.moonshot.ai/console/account"
+        "href": "https://platform.kimi.ai/console/account"
       }
     ]
   },
@@ -199,7 +198,7 @@
           "query": [
             {
               "key": "prefill_prompt",
-              "value": "Read from http://localhost:3000$path so I can ask questions about it."
+              "value": "Read from https://platform.kimi.ai$path so I can ask questions about it."
             }
           ]
         }
@@ -214,9 +213,8 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/MoonshotAI",
+      "github": "https://github.com/MoonshotAI"
     }
   },
   "banner": {

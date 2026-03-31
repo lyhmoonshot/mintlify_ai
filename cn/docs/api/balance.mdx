@@ -1,0 +1,39 @@
+---
+title: "查询余额"
+sidebarTitle: "查询余额"
+openapi: "GET /v1/users/me/balance"
+---
+
+## 请求
+
+此 API 端点需要在 Authorization 头中通过 Bearer token 进行认证。无需请求体。
+
+<ExampleRequest>
+```bash cURL
+curl 'https://api.moonshot.cn/v1/users/me/balance' \
+  -H "Authorization: Bearer $MOONSHOT_API_KEY"
+```
+</ExampleRequest>
+
+<ResponseExample>
+```json
+{
+  "code": 0,
+  "data": {
+    "available_balance": 49.58894,
+    "voucher_balance": 46.58893,
+    "cash_balance": 3.00001
+  },
+  "scode": "0x0",
+  "status": true
+}
+```
+</ResponseExample>
+
+## 返回内容说明
+
+| 字段 | 说明 | 类型 | 单位 |
+|---|---|---|---|
+| available_balance | 可用余额，包括现金余额和代金券余额，当它小于等于 0 时，用户不可调用推理 API | float | 人民币元（CNY） |
+| voucher_balance | 代金券余额，不会为负数 | float | 人民币元（CNY） |
+| cash_balance | 现金余额，可能为负数，代表用户欠费，当它为负数时，`available_balance` 为 `voucher_balance` 的值 | float | 人民币元（CNY） |
