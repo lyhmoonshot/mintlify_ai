@@ -60,10 +60,10 @@ sidebarTitle: "错误说明"
 | `engine_overloaded_error` | The engine is currently overloaded, please try again later | 当前并发请求过多，节点限流中，请稍后重试；建议充值升级 tier，享受更丝滑的体验 |
 | `exceeded_current_quota_error` | Your account \{organization-id\}\<\{ak-id\}\> is suspended, please check your plan and billing details | 账户余额不足，已停用，请检查您的账户余额 |
 | `exceeded_current_quota_error` | You exceeded your current token quota: \<\{organization_id\}\> \{token_credit\}, please check your account balance | 账户额度不足，请检查账户余额，保证账户余额可匹配您 tokens 的消耗费用后重试 |
-| `rate_limit_reached_error` | ...request reached organization max concurrency: \{Concurrency\}... | 请求触发了账户并发个数的限制，请等待指定时间后重试 |
-| `rate_limit_reached_error` | ...request reached organization max RPM: \{RPM\}... | 请求触发了账户 RPM 速率限制，请等待指定时间后重试 |
-| `rate_limit_reached_error` | ...request reached organization TPM rate limit... | 请求触发了账户 TPM 速率限制，请等待指定时间后重试 |
-| `rate_limit_reached_error` | ...request reached organization TPD rate limit... | 请求触发了账户 TPD 速率限制，请等待指定时间后重试 |
+| `rate_limit_reached_error` | Your account \{organization-id\}\<\{ak-id\}\> request reached organization max concurrency: \{Concurrency\}, please try again after \{time\} seconds | 请求触发了账户并发个数的限制，请等待指定时间后重试 |
+| `rate_limit_reached_error` | Your account \{organization-id\}\<\{ak-id\}\> request reached organization max RPM: \{RPM\}, please try again after \{time\} seconds | 请求触发了账户 RPM 速率限制，请等待指定时间后重试 |
+| `rate_limit_reached_error` | Your account \{organization-id\}\<\{ak-id\}\> request reached organization TPM rate limit, current:\{current_tpm\}, limit:\{max_tpm\} | 请求触发了账户 TPM 速率限制，请等待指定时间后重试 |
+| `rate_limit_reached_error` | Your account \{organization-id\}\<\{ak-id\}\> request reached organization TPD rate limit, current:\{current_tpd\}, limit:\{max_tpd\} | 请求触发了账户 TPD 速率限制，请等待指定时间后重试 |
 
 ### 500 — 服务端错误
 

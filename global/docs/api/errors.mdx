@@ -60,10 +60,10 @@ If you use a Key from `platform.kimi.com` on `platform.kimi.ai` (or vice versa),
 | `engine_overloaded_error` | The engine is currently overloaded, please try again later | Too many concurrent requests. Try again later or upgrade your tier. |
 | `exceeded_current_quota_error` | Your account \{organization-id\}\<\{ak-id\}\> is suspended, please check your plan and billing details | Account balance insufficient; account suspended. |
 | `exceeded_current_quota_error` | You exceeded your current token quota: \<\{organization_id\}\> \{token_credit\}, please check your account balance | Token quota exceeded. Check your account balance. |
-| `rate_limit_reached_error` | ...request reached organization max concurrency: \{Concurrency\}... | Concurrency limit reached. Wait and retry. |
-| `rate_limit_reached_error` | ...request reached organization max RPM: \{RPM\}... | RPM rate limit reached. Wait and retry. |
-| `rate_limit_reached_error` | ...request reached organization TPM rate limit... | TPM rate limit reached. Wait and retry. |
-| `rate_limit_reached_error` | ...request reached organization TPD rate limit... | TPD rate limit reached. Wait and retry. |
+| `rate_limit_reached_error` | Your account \{organization-id\}\<\{ak-id\}\> request reached organization max concurrency: \{Concurrency\}, please try again after \{time\} seconds | Concurrency limit reached. Wait and retry. |
+| `rate_limit_reached_error` | Your account \{organization-id\}\<\{ak-id\}\> request reached organization max RPM: \{RPM\}, please try again after \{time\} seconds | RPM rate limit reached. Wait and retry. |
+| `rate_limit_reached_error` | Your account \{organization-id\}\<\{ak-id\}\> request reached organization TPM rate limit, current:\{current_tpm\}, limit:\{max_tpm\} | TPM rate limit reached. Wait and retry. |
+| `rate_limit_reached_error` | Your account \{organization-id\}\<\{ak-id\}\> request reached organization TPD rate limit,current:\{current_tpd\}, limit:\{max_tpd\} | TPD rate limit reached. Wait and retry. |
 
 ### 500 — Server Error
 
