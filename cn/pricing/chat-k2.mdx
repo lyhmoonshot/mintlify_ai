@@ -1,0 +1,27 @@
+---
+title: "生成模型 kimi-k2 定价"
+sidebarTitle: "kimi-k2"
+---
+
+## 产品定价
+
+| 模型 | 计费单位 | 输入价格（缓存命中） | 输入价格（缓存未命中） | 输出价格 | 上下文窗口 |
+| ----- | ---- | --- | --- | --- | --- |
+| kimi-k2-0905-preview | 1M tokens | ¥1.00 | ¥4.00 | ¥16.00 | 262,144 tokens |
+| kimi-k2-0711-preview | 1M tokens | ¥1.00 | ¥4.00 | ¥16.00 | 131,072 tokens |
+| kimi-k2-turbo-preview | 1M tokens | ¥1.00 | ¥8.00 | ¥58.00 | 262,144 tokens |
+| kimi-k2-thinking | 1M tokens | ¥1.00 | ¥4.00 | ¥16.00 | 262,144 tokens |
+| kimi-k2-thinking-turbo | 1M tokens | ¥1.00 | ¥8.00 | ¥58.00 | 262,144 tokens |
+
+此处 1M = 1,000,000，表格中的价格代表每消耗 1M tokens 的价格。
+
+## 模型说明
+
+- kimi-k2 是一款具备超强代码和 Agent 能力的 MoE 架构基础模型，总参数 1T，激活参数 32B。在通用知识推理、编程、数学、Agent 等主要类别的基准性能测试中，K2 模型的性能超过其他主流开源模型
+- kimi-k2-0905-preview 模型上下文长度 256k，在 kimi-k2-0711-preview 能力的基础上，具备更强的 Agentic Coding 能力、更突出的前端代码的美观度和实用性、以及更好的上下文理解能力
+- kimi-k2-turbo-preview 模型上下文长度 256k，是 kimi k2 的高速版本模型，始终对标最新版本的 kimi-k2 模型（kimi-k2-0905-preview）。模型参数与 kimi-k2 一致，但输出速度已提至每秒 60 tokens，最高可达每秒 100 tokens
+- kimi-k2-0711-preview 模型上下文长度为 128k
+- kimi-k2-thinking 模型上下文长度 256k，是具有通用 Agentic 能力和推理能力的思考模型，它擅长深度推理[使用须知](/guide/use-kimi-k2-thinking-model)
+- kimi-k2-thinking-turbo 模型上下文长度 256k，是 kimi-k2-thinking 模型的高速版，适用于需要深度推理和追求极致高速的场景
+- 支持 ToolCalls、JSON Mode、Partial Mode、联网搜索功能等，不支持视觉功能
+- 支持自动上下文缓存功能，缓存命中的 tokens 将按照输入价格（缓存命中）单价收费，您可以在[控制台](/console)中查看"context caching"类型的费用明细

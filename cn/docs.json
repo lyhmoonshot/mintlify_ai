@@ -25,25 +25,25 @@
           {
             "group": "概述",
             "pages": [
-              "docs/overview",
-              "docs/introduction",
-              "docs/models"
+              "overview",
+              "introduction",
+              "models"
             ]
           },
           {
             "group": "快速上手",
             "pages": [
-              "docs/guide/start-using-kimi-api",
-              "docs/guide/kimi-k2-5-quickstart",
-              "docs/guide/kimi-k2-quickstart"
+              "guide/start-using-kimi-api",
+              "guide/kimi-k2-5-quickstart",
+              "guide/kimi-k2-quickstart"
             ]
           },
           {
             "group": "下一步",
             "pages": [
-              "docs/guide/use-kimi-k2-thinking-model",
-              "docs/guide/engage-in-multi-turn-conversations-using-kimi-api",
-              "docs/guide/use-kimi-vision-model"
+              "guide/use-kimi-k2-thinking-model",
+              "guide/engage-in-multi-turn-conversations-using-kimi-api",
+              "guide/use-kimi-vision-model"
             ]
           }
         ]
@@ -54,38 +54,38 @@
           {
             "group": "核心工作流",
             "pages": [
-              "docs/guide/utilize-the-streaming-output-feature-of-kimi-api",
-              "docs/guide/use-json-mode-feature-of-kimi-api",
-              "docs/guide/use-partial-mode-feature-of-kimi-api",
-              "docs/guide/auto-reconnect",
-              "docs/guide/use-kimi-api-for-file-based-qa"
+              "guide/utilize-the-streaming-output-feature-of-kimi-api",
+              "guide/use-json-mode-feature-of-kimi-api",
+              "guide/use-partial-mode-feature-of-kimi-api",
+              "guide/auto-reconnect",
+              "guide/use-kimi-api-for-file-based-qa"
             ]
           },
           {
             "group": "工具调用",
             "pages": [
-              "docs/guide/use-kimi-api-to-complete-tool-calls",
-              "docs/guide/use-web-search",
-              "docs/guide/use-official-tools",
-              "docs/guide/configure-the-modelscope-mcp-server"
+              "guide/use-kimi-api-to-complete-tool-calls",
+              "guide/use-web-search",
+              "guide/use-official-tools",
+              "guide/configure-the-modelscope-mcp-server"
             ]
           },
           {
             "group": "调试与运维",
             "pages": [
-              "docs/guide/use-moonpalace",
-              "docs/guide/use-playground-to-debug-the-model",
-              "docs/guide/org-best-practice"
+              "guide/use-moonpalace",
+              "guide/use-playground-to-debug-the-model",
+              "guide/org-best-practice"
             ]
           },
           {
             "group": "集成",
             "pages": [
-              "docs/guide/use-kimi-in-openclaw",
-              "docs/guide/agent-support",
-              "docs/guide/kimi-cli-support",
-              "docs/guide/use-kimi-k2-to-setup-agent",
-              "docs/guide/migrating-from-openai-to-kimi"
+              "guide/use-kimi-in-openclaw",
+              "guide/agent-support",
+              "guide/kimi-cli-support",
+              "guide/use-kimi-k2-to-setup-agent",
+              "guide/migrating-from-openai-to-kimi"
             ]
           }
         ]
@@ -96,37 +96,37 @@
           {
             "group": "使用 API",
             "pages": [
-              "docs/api/overview",
-              "docs/api/quickstart",
-              "docs/api/models-overview",
-              "docs/api/errors"
+              "api/overview",
+              "api/quickstart",
+              "api/models-overview",
+              "api/errors"
             ]
           },
           {
             "group": "核心能力",
             "pages": [
-              "docs/api/tool-use",
-              "docs/api/partial"
+              "api/tool-use",
+              "api/partial"
             ]
           },
           {
             "group": "API Reference",
             "pages": [
-              "docs/api/chat",
-              "docs/api/list-models",
-              "docs/api/estimate",
-              "docs/api/balance"
+              "api/chat",
+              "api/list-models",
+              "api/estimate",
+              "api/balance"
             ]
           },
           {
             "group": "文件接口",
             "pages": [
-              "docs/api/files",
-              "docs/api/files-upload",
-              "docs/api/files-list",
-              "docs/api/files-retrieve",
-              "docs/api/files-delete",
-              "docs/api/files-content"
+              "api/files",
+              "api/files-upload",
+              "api/files-list",
+              "api/files-retrieve",
+              "api/files-delete",
+              "api/files-content"
             ]
           }
         ]
@@ -137,23 +137,23 @@
           {
             "group": "模型推理定价",
             "pages": [
-              "docs/pricing/chat",
-              "docs/pricing/chat-k25",
-              "docs/pricing/chat-k2",
-              "docs/pricing/chat-v1"
+              "pricing/chat",
+              "pricing/chat-k25",
+              "pricing/chat-k2",
+              "pricing/chat-v1"
             ]
           },
           {
             "group": "其他",
             "pages": [
-              "docs/pricing/tools",
-              "docs/pricing/limits"
+              "pricing/tools",
+              "pricing/limits"
             ]
           },
           {
             "group": "支持",
             "pages": [
-              "docs/pricing/faq"
+              "pricing/faq"
             ]
           }
         ]
@@ -164,18 +164,18 @@
           {
             "group": "学习与支持",
             "pages": [
-              "docs/guide/prompt-best-practice",
-              "docs/guide/benchmark-best-practice",
-              "docs/guide/faq"
+              "guide/prompt-best-practice",
+              "guide/benchmark-best-practice",
+              "guide/faq"
             ]
           },
           {
             "group": "条款与协议",
             "pages": [
-              "docs/agreement/modeluse",
-              "docs/agreement/userprivacy",
-              "docs/agreement/userservice",
-              "docs/agreement/payment"
+              "agreement/modeluse",
+              "agreement/userprivacy",
+              "agreement/userservice",
+              "agreement/payment"
             ]
           }
         ]
@@ -234,10 +234,10 @@
       {
         "header": "条款与协议",
         "items": [
-          { "label": "平台服务协议", "href": "/docs/agreement/modeluse" },
-          { "label": "用户服务协议", "href": "/docs/agreement/userservice" },
-          { "label": "用户隐私协议", "href": "/docs/agreement/userprivacy" },
-          { "label": "充值协议", "href": "/docs/agreement/payment" }
+          { "label": "平台服务协议", "href": "/agreement/modeluse" },
+          { "label": "用户服务协议", "href": "/agreement/userservice" },
+          { "label": "用户隐私协议", "href": "/agreement/userprivacy" },
+          { "label": "充值协议", "href": "/agreement/payment" }
         ]
       },
       {

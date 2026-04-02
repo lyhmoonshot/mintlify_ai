@@ -25,25 +25,25 @@
           {
             "group": "Overview",
             "pages": [
-              "docs/overview",
-              "docs/introduction",
-              "docs/models"
+              "overview",
+              "introduction",
+              "models"
             ]
           },
           {
             "group": "Quickstart",
             "pages": [
-              "docs/guide/start-using-kimi-api",
-              "docs/guide/kimi-k2-5-quickstart",
-              "docs/guide/kimi-k2-quickstart"
+              "guide/start-using-kimi-api",
+              "guide/kimi-k2-5-quickstart",
+              "guide/kimi-k2-quickstart"
             ]
           },
           {
             "group": "Next steps",
             "pages": [
-              "docs/guide/use-kimi-k2-thinking-model",
-              "docs/guide/engage-in-multi-turn-conversations-using-kimi-api",
-              "docs/guide/use-kimi-vision-model"
+              "guide/use-kimi-k2-thinking-model",
+              "guide/engage-in-multi-turn-conversations-using-kimi-api",
+              "guide/use-kimi-vision-model"
             ]
           }
         ]
@@ -54,38 +54,38 @@
           {
             "group": "Core workflows",
             "pages": [
-              "docs/guide/utilize-the-streaming-output-feature-of-kimi-api",
-              "docs/guide/use-json-mode-feature-of-kimi-api",
-              "docs/guide/use-partial-mode-feature-of-kimi-api",
-              "docs/guide/auto-reconnect",
-              "docs/guide/use-kimi-api-for-file-based-qa"
+              "guide/utilize-the-streaming-output-feature-of-kimi-api",
+              "guide/use-json-mode-feature-of-kimi-api",
+              "guide/use-partial-mode-feature-of-kimi-api",
+              "guide/auto-reconnect",
+              "guide/use-kimi-api-for-file-based-qa"
             ]
           },
           {
             "group": "Tooling workflows",
             "pages": [
-              "docs/guide/use-kimi-api-to-complete-tool-calls",
-              "docs/guide/use-web-search",
-              "docs/guide/use-official-tools",
-              "docs/guide/configure-the-modelscope-mcp-server"
+              "guide/use-kimi-api-to-complete-tool-calls",
+              "guide/use-web-search",
+              "guide/use-official-tools",
+              "guide/configure-the-modelscope-mcp-server"
             ]
           },
           {
             "group": "Debugging and operations",
             "pages": [
-              "docs/guide/use-moonpalace",
-              "docs/guide/use-playground-to-debug-the-model",
-              "docs/guide/org-best-practice"
+              "guide/use-moonpalace",
+              "guide/use-playground-to-debug-the-model",
+              "guide/org-best-practice"
             ]
           },
           {
             "group": "Integrations",
             "pages": [
-              "docs/guide/use-kimi-in-openclaw",
-              "docs/guide/agent-support",
-              "docs/guide/kimi-cli-support",
-              "docs/guide/use-kimi-k2-to-setup-agent",
-              "docs/guide/migrating-from-openai-to-kimi"
+              "guide/use-kimi-in-openclaw",
+              "guide/agent-support",
+              "guide/kimi-cli-support",
+              "guide/use-kimi-k2-to-setup-agent",
+              "guide/migrating-from-openai-to-kimi"
             ]
           }
         ]
@@ -96,37 +96,37 @@
           {
             "group": "Using the API",
             "pages": [
-              "docs/api/overview",
-              "docs/api/quickstart",
-              "docs/api/models-overview",
-              "docs/api/errors"
+              "api/overview",
+              "api/quickstart",
+              "api/models-overview",
+              "api/errors"
             ]
           },
           {
             "group": "Capabilities",
             "pages": [
-              "docs/api/tool-use",
-              "docs/api/partial"
+              "api/tool-use",
+              "api/partial"
             ]
           },
           {
             "group": "API Reference",
             "pages": [
-              "docs/api/chat",
-              "docs/api/list-models",
-              "docs/api/estimate",
-              "docs/api/balance"
+              "api/chat",
+              "api/list-models",
+              "api/estimate",
+              "api/balance"
             ]
           },
           {
             "group": "Files",
             "pages": [
-              "docs/api/files",
-              "docs/api/files-upload",
-              "docs/api/files-list",
-              "docs/api/files-retrieve",
-              "docs/api/files-delete",
-              "docs/api/files-content"
+              "api/files",
+              "api/files-upload",
+              "api/files-list",
+              "api/files-retrieve",
+              "api/files-delete",
+              "api/files-content"
             ]
           }
         ]
@@ -137,23 +137,23 @@
           {
             "group": "Chat Pricing",
             "pages": [
-              "docs/pricing/chat",
-              "docs/pricing/chat-k25",
-              "docs/pricing/chat-k2",
-              "docs/pricing/chat-v1"
+              "pricing/chat",
+              "pricing/chat-k25",
+              "pricing/chat-k2",
+              "pricing/chat-v1"
             ]
           },
           {
             "group": "Other",
             "pages": [
-              "docs/pricing/tools",
-              "docs/pricing/limits"
+              "pricing/tools",
+              "pricing/limits"
             ]
           },
           {
             "group": "Support",
             "pages": [
-              "docs/pricing/faq"
+              "pricing/faq"
             ]
           }
         ]
@@ -164,14 +164,14 @@
           {
             "group": "Learning and support",
             "pages": [
-              "docs/guide/prompt-best-practice",
-              "docs/guide/benchmark-best-practice",
-              "docs/guide/faq"
+              "guide/prompt-best-practice",
+              "guide/benchmark-best-practice",
+              "guide/faq"
             ]
           },
           {
             "group": "Legal",
-            "pages": ["docs/agreement/modeluse", "docs/agreement/userprivacy"]
+            "pages": ["agreement/modeluse", "agreement/userprivacy"]
           }
         ]
       }
@@ -239,9 +239,9 @@
       {
         "header": "Legal",
         "items": [
-          { "label": "Platform Terms of Service", "href": "/docs/agreement/modeluse" },
-          { "label": "User Terms of Service", "href": "/docs/agreement/userservice" },
-          { "label": "Privacy Policy", "href": "/docs/agreement/userprivacy" }
+          { "label": "Platform Terms of Service", "href": "/agreement/modeluse" },
+          { "label": "User Terms of Service", "href": "/agreement/userservice" },
+          { "label": "Privacy Policy", "href": "/agreement/userprivacy" }
         ]
       },
       {
