@@ -229,9 +229,36 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/MoonshotAI",
-      "github": "https://github.com/MoonshotAI"
-    }
+      "x": "https://x.com/Kimi_Moonshot",
+      "github": "https://github.com/MoonshotAI",
+      "linkedin": "https://www.linkedin.com/company/kimi-ai-linkedin/"
+    },
+    "links": [
+      {
+        "header": "Contact",
+        "items": [
+          { "label": "Forum", "href": "https://forum.moonshot.ai/" },
+          { "label": "Discord", "href": "https://discord.gg/TYU2fdJykW" },
+          { "label": "Email Us", "href": "mailto:api-service@moonshot.ai" }
+        ]
+      },
+      {
+        "header": "Legal",
+        "items": [
+          { "label": "Platform Terms of Service", "href": "/docs/agreement/modeluse" },
+          { "label": "User Terms of Service", "href": "/docs/agreement/userservice" },
+          { "label": "Privacy Policy", "href": "/docs/agreement/userprivacy" }
+        ]
+      },
+      {
+        "header": "Company",
+        "items": [
+          { "label": "Moonshot Website", "href": "https://www.moonshot.ai" },
+          { "label": "Kimi", "href": "https://kimi.com" },
+          { "label": "Kimi Code", "href": "https://www.kimi.com/code?from=kimi_platform" }
+        ]
+      }
+    ]
   },
   "banner": {
     "content": "🎉 New kimi k2.5 Multi-modal Model released! Now supports multimodal understanding and processing.",

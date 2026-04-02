@@ -230,12 +230,30 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/MoonshotAI",
       "github": "https://github.com/MoonshotAI"
-    }
+    },
+    "links": [
+      {
+        "header": "条款与协议",
+        "items": [
+          { "label": "平台服务协议", "href": "/docs/agreement/modeluse" },
+          { "label": "用户服务协议", "href": "/docs/agreement/userservice" },
+          { "label": "用户隐私协议", "href": "/docs/agreement/userprivacy" },
+          { "label": "充值协议", "href": "/docs/agreement/payment" }
+        ]
+      },
+      {
+        "header": "公司",
+        "items": [
+          { "label": "Moonshot 官网", "href": "https://www.moonshot.cn" },
+          { "label": "Kimi", "href": "https://kimi.com" },
+          { "label": "Kimi Code", "href": "https://www.kimi.com/code?from=kimi_platform" }
+        ]
+      }
+    ]
   },
   "banner": {
-    "content": "Kimi K2.5 多模态模型现已发布！支持多模态理解与处理。",
+    "content": "🎉 Kimi K2.5 多模态模型现已发布！支持多模态理解与处理。",
     "dismissible": true
   }
 }

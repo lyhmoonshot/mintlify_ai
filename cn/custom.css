@@ -26,6 +26,12 @@
   --brand-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.84), rgba(0, 0, 0, 0.3), transparent);
 }
 
+/* Footer: hide divider, "Powered by Mintlify", and theme toggle buttons */
+#footer > * > div:last-child,
+#footer > * > div:nth-last-child(2) {
+  display: none !important;
+}
+
 /* Global Mintlify UI tuning */
 #search-bar-entry,
 #search-bar-entry-mobile {
