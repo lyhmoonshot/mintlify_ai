@@ -1,7 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "language": "zh",
   "name": "Kimi 开放平台",
   "colors": {
     "primary": "#111111",
@@ -19,6 +18,12 @@
     }
   },
   "navigation": {
+    "languages": [
+      {
+        "language": "zh",
+        "default": true
+      }
+    ],
     "tabs": [
       {
         "tab": "快速开始",
