@@ -9,7 +9,8 @@
       "og:locale": "en-US",
       "og:image": "https://platform.kimi.ai/og.png?v=1",
       "og:image:alt": "Kimi API Platform",
-      "canonical": "https://platform.kimi.ai",
+      "robots": "index,follow",
+      "canonical": "https://platform.kimi.ai/docs",
       "description": "Kimi K2.5 Open Platform, providing trillion-parameter K2.5 large language model API, supporting 256K long context and Tool Calling. Professional code generation, intelligent dialogue, visual reasoning, helping developers build AI applications."
     }
   },

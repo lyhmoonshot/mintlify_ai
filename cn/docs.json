@@ -9,7 +9,8 @@
       "og:locale": "zh-CN",
       "og:image": "https://platform.kimi.com/og.png?v=1",
       "og:image:alt": "Kimi API 开放平台",
-      "canonical": "https://platform.kimi.com",
+      "robots": "index,follow",
+      "canonical": "https://platform.kimi.com/docs",
       "description": "Kimi K2.5 开放平台，提供万亿参数 K2.5 大模型 API，支持 256K 超长上下文、多模态理解和 Tool Calling。专业代码生成、智能对话、视觉推理，助力开发者构建下一代 AI 应用。",
       "keywords": "Kimi K2.5,Moonshot AI,K2.5 大模型,AI API,多模态模型,Tool Calling,代码生成,智能对话,AI Agent,长上下文,视觉理解,开源模型,LLM API,Claw Bot"
     }
