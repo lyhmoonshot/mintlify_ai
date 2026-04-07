@@ -241,6 +241,17 @@
       "linkedin": "https://www.linkedin.com/company/kimi-ai-linkedin/"
     }
   },
+  "integrations": {
+    "gtm": {
+      "tagId": "G-Z0ZTEN03PZ"
+    },
+    "ga4": {
+      "measurementId": "G-Z0ZTEN03PZ"
+    },
+    "clarity": {
+      "projectId": "r1wlk72gay"
+    }
+  },
   "banner": {
     "content": "🎉 New kimi k2.5 Multi-modal Model released! Now supports multimodal understanding and processing.",
     "dismissible": false

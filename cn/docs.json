@@ -250,6 +250,17 @@
       "github": "https://github.com/MoonshotAI"
     }
   },
+  "integrations": {
+    "gtm": {
+      "tagId": "G-Z0ZTEN03PZ"
+    },
+    "ga4": {
+      "measurementId": "G-Z0ZTEN03PZ"
+    },
+    "clarity": {
+      "projectId": "m2g9u6rh9d"
+    }
+  },
   "banner": {
     "content": "🎉 Kimi K2.5 多模态模型现已发布！支持多模态理解与处理。",
     "dismissible": false
