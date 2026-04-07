@@ -69,28 +69,54 @@ sidebarTitle: "Welcome"
       <a href="pricing/chat" className="overview-section-link" style={{ fontSize: '14px' }}>View all</a>
     </div>
     <div className="overview-grid-3">
-      {[
-        { name: "kimi-k2.5", img: "/assets/moonshot-ai/report5.png", tag: "Multimodal understanding", href: "pricing/chat-k25" },
-        { name: "kimi-k2-turbo-preview", img: "/assets/moonshot-ai/report2.png", tag: "preview", href: "pricing/chat-k2" },
-        { name: "kimi-k2-thinking", img: "/assets/moonshot-ai/k2-0905.png", tag: "long think", href: "pricing/chat-k2" },
-      ].map((item, idx) => (
-        <div key={idx} className="overview-model-card">
-          <div className="overview-model-card__media" style={{ position: 'relative' }}>
-            <img className="overview-model-card__image" src={item.img} alt={item.name} />
-            <div className="overview-model-card__overlay" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end' }}>
-              <div className="overview-model-card__content">
-                <div className="overview-model-card__name">{item.name}</div>
-                <div className="overview-model-card__tag-row">
-                  <span style={{ border: '1px solid rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.9)', padding: '2px 8px', borderRadius: '9999px', fontSize: '12px', background: 'rgba(0,0,0,0.2)' }}>
-                    {item.tag}
-                  </span>
-                </div>
+      <div className="overview-model-card">
+        <div className="overview-model-card__media" style={{ position: 'relative' }}>
+          <img className="overview-model-card__image" src="/assets/moonshot-ai/report5.png" alt="kimi-k2.5" />
+          <div className="overview-model-card__overlay" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end' }}>
+            <div className="overview-model-card__content">
+              <div className="overview-model-card__name">kimi-k2.5</div>
+              <div className="overview-model-card__tag-row">
+                <span style={{ border: '1px solid rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.9)', padding: '2px 8px', borderRadius: '9999px', fontSize: '12px', background: 'rgba(0,0,0,0.2)' }}>
+                  Multimodal understanding
+                </span>
               </div>
             </div>
           </div>
-          <a className="overview-overlay-link" href={item.href} aria-label={item.name} target="_self" />
         </div>
-      ))}
+        <a className="overview-overlay-link" href="pricing/chat-k25" aria-label="kimi-k2.5" />
+      </div>
+      <div className="overview-model-card">
+        <div className="overview-model-card__media" style={{ position: 'relative' }}>
+          <img className="overview-model-card__image" src="/assets/moonshot-ai/report2.png" alt="kimi-k2-turbo-preview" />
+          <div className="overview-model-card__overlay" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end' }}>
+            <div className="overview-model-card__content">
+              <div className="overview-model-card__name">kimi-k2-turbo-preview</div>
+              <div className="overview-model-card__tag-row">
+                <span style={{ border: '1px solid rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.9)', padding: '2px 8px', borderRadius: '9999px', fontSize: '12px', background: 'rgba(0,0,0,0.2)' }}>
+                  preview
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a className="overview-overlay-link" href="pricing/chat-k2" aria-label="kimi-k2-turbo-preview" />
+      </div>
+      <div className="overview-model-card">
+        <div className="overview-model-card__media" style={{ position: 'relative' }}>
+          <img className="overview-model-card__image" src="/assets/moonshot-ai/k2-0905.png" alt="kimi-k2-thinking" />
+          <div className="overview-model-card__overlay" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end' }}>
+            <div className="overview-model-card__content">
+              <div className="overview-model-card__name">kimi-k2-thinking</div>
+              <div className="overview-model-card__tag-row">
+                <span style={{ border: '1px solid rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.9)', padding: '2px 8px', borderRadius: '9999px', fontSize: '12px', background: 'rgba(0,0,0,0.2)' }}>
+                  long think
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a className="overview-overlay-link" href="pricing/chat-k2" aria-label="kimi-k2-thinking" />
+      </div>
     </div>
   </div>
 
