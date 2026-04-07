@@ -40,7 +40,7 @@ sidebarTitle: "Welcome"
     <div className="overview-grid-2">
       {[
         { title: "Getting Started with Kimi K2.5", desc: "Kimi K2.5 quick start guide and basic concepts", icon: "bolt", href: "guide/kimi-k2-5-quickstart" },
-        { title: "Console", desc: "Manage API keys, usage and billing", icon: "chart-line", href: "/console" },
+        { title: "Console", desc: "Manage API keys, usage and billing", icon: "chart-line", href: "https://platform.kimi.ai/console" },
         { title: "Getting Started with Kimi K2", desc: "Quickly understand and get started with Kimi K2 model", icon: "handshake", href: "guide/kimi-k2-quickstart" },
         { title: "Pricing & Billing", desc: "Learn about model pricing and billing methods", icon: "wallet", href: "pricing/chat" },
         { title: "Using Thinking Models", desc: "Learn how to use Kimi model's thinking capabilities", icon: "clock", href: "guide/use-kimi-k2-thinking-model" },
@@ -56,7 +56,7 @@ sidebarTitle: "Welcome"
               <div className="overview-link-card__description">{item.desc}</div>
             </div>
           </div>
-          <a className="overview-overlay-link" href={item.href} aria-label={item.title} />
+          <a className="overview-overlay-link" href={item.href} aria-label={item.title} target="_self" />
         </div>
       ))}
     </div>
@@ -126,7 +126,7 @@ sidebarTitle: "Welcome"
     <div className="overview-grid-4">
       {[
         { title: "K2 Model Details", desc: "Learn about K2 model features and advantages", icon: "brain", href: "https://moonshotai.github.io/Kimi-K2/" },
-        { title: "Development Workbench", desc: "Interactive interface to experience Kimi model capabilities", icon: "terminal", href: "/playground" },
+        { title: "Development Workbench", desc: "Interactive interface to experience Kimi model capabilities", icon: "terminal", href: "https://platform.kimi.ai/playground" },
         { title: "Web Search Tool", desc: "Use Kimi's official web search tool", icon: "magnifying-glass", href: "guide/use-web-search" },
         { title: "Best Practices", desc: "Prompt writing and application examples", icon: "file-lines", href: "guide/prompt-best-practice" },
       ].map((item, idx) => (
@@ -140,7 +140,7 @@ sidebarTitle: "Welcome"
               <div className="overview-resource-card__description">{item.desc}</div>
             </div>
           </div>
-          <a className="overview-overlay-link" href={item.href} aria-label={item.title} />
+          <a className="overview-overlay-link" href={item.href} aria-label={item.title} target="_self" />
         </div>
       ))}
     </div>
