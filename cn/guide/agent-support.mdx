@@ -3,11 +3,11 @@ title: "在编程工具中使用 Kimi K2.5 模型"
 sidebarTitle: "编程工具集成"
 ---
 
-kimi-k2.5 是一款具备超强代码和 Agent 能力的 MoE 架构基础模型，我们以 Claude Code， VS Code & Cline/RooCode 为示例，说明如何使用 kimi-k2.5 系列模型。
+Kimi K2.5 是一款具备超强代码和 Agent 能力的 MoE 架构基础模型，我们以 Claude Code， VS Code & Cline/RooCode 为示例，说明如何使用 Kimi K2.5 系列模型。
 
 **2026年1月27日最新发布 `kimi-k2.5` 模型，支持256K上下文窗口，原生融合文本与视觉理解，具备 Agent 集群协作模式，在智能体任务、代码生成、视觉推理等复杂场景表现领先。**
 **2025年11月6日最新发布 `kimi-k2-thinking` 和 `kimi-k2-thinking-turbo` 模型，支持 256k 上下文，支持多步工具调用与思考，擅长解决更复杂的问题。**
-**2025年9月5日最新发布 `kimi-k2-0905-preview` 模型，上下文窗口扩展至 256K，代码能力更强。如果您需要更快的响应速度，可以使用 `kimi-k2-turbo-preview` 模型，它始终对标最新版本的 kimi-k2 并保持功能一致，但输出速度已提升到 60tokens/s，最高可达 100 tokens/s。**
+**2025年9月5日最新发布 `kimi-k2-0905-preview` 模型，上下文窗口扩展至 256K，代码能力更强。如果您需要更快的响应速度，可以使用 `kimi-k2-turbo-preview` 模型，它始终对标最新版本的 Kimi K2 并保持功能一致，但输出速度已提升到 60tokens/s，最高可达 100 tokens/s。**
 
 ## 使用注意事项
 
@@ -96,7 +96,7 @@ node --eval "
 
 完成 Claude Code 安装后，请按照以下方式设置环境变量使用 `kimi-k2.5` 模型，并启动 Claude。
 
-注：如果仍然需选择 kimi-k2 慢速版模型，可以将下方模型替换为 `kimi-k2-thinking` 来使用。
+注：如果仍然需选择 Kimi K2 慢速版模型，可以将下方模型替换为 `kimi-k2-thinking` 来使用。
 
 #### MacOS 和 Linux
 
@@ -161,7 +161,7 @@ claude
 1. 在 VS Code 左侧活动栏中看到 Cline 图标
 2. 或者通过命令面板（`Ctrl+Shift+P` / `Cmd+Shift+P`）搜索 "Cline" 相关命令来验证安装成功
 
-### 官方推荐：配置 Moonshot Provider 使用 kimi-k2.5 模型
+### 官方推荐：配置 Moonshot Provider 使用 Kimi K2.5 模型
 
 * API Provider 选择 'Moonshot'
 * Moonshot Entrypoint 选择 'api.moonshot.cn'
@@ -172,9 +172,9 @@ claude
 
 ![moonshot\_cline](/assets/pics/cline/moonshot_cline.png)
 
-### 在 cline 中体验 kimi-k2.5 模型效果
+### 在 cline 中体验 Kimi K2.5 模型效果
 
-* 我们让 kimi-k2.5 模型写一个贪吃蛇游戏
+* 我们让 Kimi K2.5 模型写一个贪吃蛇游戏
 
 <Frame>
   <video controls style={{ width: '100%', height: 'auto' }}>
@@ -192,7 +192,7 @@ claude
   </video>
 </Frame>
 
-## 在 RooCode 中使用 kimi k2.5 模型
+## 在 RooCode 中使用 Kimi K2.5 模型
 
 ### 安装 RooCode
 
@@ -212,7 +212,7 @@ claude
 1. 在 VS Code 左侧活动栏中看到 RooCode 图标
 2. 或者通过命令面板（`Ctrl+Shift+P` / `Cmd+Shift+P`）搜索 "RooCode" 相关命令来验证安装成功
 
-### 官方推荐：配置 Moonshot Provider 使用 kimi-k2.5 模型
+### 官方推荐：配置 Moonshot Provider 使用 Kimi K2.5 模型
 
 * API Provider 选择 'Moonshot'
 * Moonshot Entrypoint 选择 'api.moonshot.cn'
@@ -222,7 +222,7 @@ claude
 
 ![roocode](/assets/pics/cline/moonshot_roocode.png)
 
-## 直接使用 API 调用 kimi-k2.5 模型
+## 直接使用 API 调用 Kimi K2.5 模型
 
 <Tabs>
   <Tab title="python">

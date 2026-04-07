@@ -20,9 +20,9 @@ sidebarTitle: "模型参数参考"
 当 `temperature` 接近 0 时，`n` 只能为 1，否则将返回 `invalid_request_error`。
 </Note>
 
-## kimi-k2.5 — thinking 参数
+## Kimi K2.5 — thinking 参数
 
-kimi-k2.5 支持通过 `thinking` 参数控制是否启用深度思考。接受 `{"type": "enabled"}` 或 `{"type": "disabled"}`。
+Kimi K2.5 支持通过 `thinking` 参数控制是否启用深度思考。接受 `{"type": "enabled"}` 或 `{"type": "disabled"}`。
 
 由于 OpenAI SDK 没有原生的 `thinking` 参数，需要使用 `extra_body` 传递：
 
