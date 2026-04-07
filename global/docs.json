@@ -242,9 +242,6 @@
     }
   },
   "integrations": {
-    "gtm": {
-      "tagId": "G-Z0ZTEN03PZ"
-    },
     "ga4": {
       "measurementId": "G-Z0ZTEN03PZ"
     },
