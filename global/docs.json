@@ -1,14 +1,16 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Kimi Platform",
+  "name": "Kimi API Platform",
   "description": "Kimi K2.5 Open Platform, providing trillion-parameter K2.5 large language model API, supporting 256K long context and Tool Calling. Professional code generation, intelligent dialogue, visual reasoning, helping developers build AI applications.",
   "seo": {
     "metatags": {
       "og:site_name": "Kimi API Platform",
       "og:locale": "en-US",
-      "og:image": "/assets/og.png",
-      "og:image:alt": "Kimi API Platform"
+      "og:image": "https://platform.kimi.ai/og.png?v=1",
+      "og:image:alt": "Kimi API Platform",
+      "canonical": "https://platform.kimi.ai",
+      "description": "Kimi K2.5 Open Platform, providing trillion-parameter K2.5 large language model API, supporting 256K long context and Tool Calling. Professional code generation, intelligent dialogue, visual reasoning, helping developers build AI applications."
     }
   },
   "colors": {
